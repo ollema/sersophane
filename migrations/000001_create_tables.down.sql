@@ -4,5 +4,5 @@ DROP TABLE IF EXISTS event_artist;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS artists;
 DROP TABLE IF EXISTS events;
-DROP TYPE event_type;
+DROP TYPE IF EXISTS event_type;
 COMMIT;

@@ -1,0 +1,21 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    line-height: 1.5;
+    background-color: #F1F3F6;
+    color: #34495E;
+    overflow-y: scroll;
+}
+
+header, nav, main, footer {
+    padding: 2px calc((100% - 800px) / 2) 0;
+}
+
+main {
+    margin-top: 54px;
+    margin-bottom: 54px;
+    min-height: calc(100vh - 345px);
+    overflow: auto;
+}

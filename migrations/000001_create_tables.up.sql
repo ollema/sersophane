@@ -25,7 +25,9 @@ CREATE TABLE IF NOT EXISTS users (
     id bigserial PRIMARY KEY,
     name citext UNIQUE NOT NULL,
     created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
-    active bool NOT NULL,
+    email citext UNIQUE NOT NULL,
+    password_hash bytea NOT NULL,
+    active bool NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS event_artist (
