@@ -1,39 +1,43 @@
-begin;
+BEGIN;
 
-create type event_type as enum ('concert', 'festival', 'film');
-
-create table if not exists events (
-    id bigserial primary key,
-    name text not null,
-    type event_type not null,
-    created timestamp(0) with time zone not null default now(),
-    start timestamp(0) with time zone not null,
-    end timestamp(0) with time zone not null,
-    location text not null
+CREATE TYPE event_type AS enum (
+    'concert',
+    'festival',
+    'film'
 );
 
-create table if not exists artists (
-    id bigserial primary key,
-    name text not null
+CREATE TABLE IF NOT EXISTS events (
+    id bigserial PRIMARY KEY,
+    name text NOT NULL,
+    event_type event_type NOT NULL,
+    created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
+    start_at timestamp(0) WITH time zone NOT NULL,
+    end_at timestamp(0) WITH time zone NOT NULL,
+    venue text NOT NULL
 );
 
-create table if not exists users (
-    id bigserial primary key,
-    name text not null
-    created timestamp(0) with time zone not null default now(),
-    active bool not null,
+CREATE TABLE IF NOT EXISTS artists (
+    id bigserial PRIMARY KEY,
+    name citext UNIQUE NOT NULL
 );
 
-create table if not exists event_artist (
-    event_id bigint not null references events (id) on delete cascade,
-    artist_id bigint not null references artists (id) on delete cascade,
-    constraint event_artist_key primary key (event_id, artist_id)
+CREATE TABLE IF NOT EXISTS users (
+    id bigserial PRIMARY KEY,
+    name citext UNIQUE NOT NULL,
+    created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
+    active bool NOT NULL,
 );
 
-create table if not exists event_user (
-    event_id bigint not null references events (id) on delete cascade,
-    user_id bigint not null references users (id) on delete cascade,
-    constraint event_user_key primary key (event_id, user_id)
+CREATE TABLE IF NOT EXISTS event_artist (
+    event_id bigint NOT NULL REFERENCES events (id) ON DELETE CASCADE,
+    artist_id bigint NOT NULL REFERENCES artists (id) ON DELETE CASCADE,
+    CONSTRAINT event_artist_key PRIMARY KEY (event_id, artist_id)
 );
 
-commit;
+CREATE TABLE IF NOT EXISTS event_user (
+    event_id bigint NOT NULL REFERENCES events (id) ON DELETE CASCADE,
+    user_id bigint NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT event_user_key PRIMARY KEY (event_id, user_id)
+);
+
+COMMIT;

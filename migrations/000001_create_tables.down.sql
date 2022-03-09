@@ -1,15 +1,8 @@
-begin;
-
-drop table if exists event_user;
-
-drop table if exists event_artist;
-
-drop table if exists users;
-
-drop table if exists artists;
-
-drop table if exists events;
-
-drop type event_type;
-
-commit;
+BEGIN;
+DROP TABLE IF EXISTS event_user;
+DROP TABLE IF EXISTS event_artist;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS artists;
+DROP TABLE IF EXISTS events;
+DROP TYPE event_type;
+COMMIT;
