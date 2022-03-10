@@ -9,6 +9,7 @@ import (
 
 	"github.com/justinas/nosurf"
 	"github.com/ollema/sersophane/pkg/forms"
+	"github.com/ollema/sersophane/pkg/models"
 	"github.com/ollema/sersophane/ui"
 )
 
@@ -17,7 +18,23 @@ type templateData struct {
 	Flash           string
 	Form            *forms.Form
 	IsAuthenticated bool
+	NavItems        []NavItem
+	ActiveNavItem   NavItem
+	User            *models.User
 }
+
+type NavItem struct {
+	Name string
+	Link string
+}
+
+var DefaultNavItems []NavItem = []NavItem{
+	HomeNavItem,
+	AboutNavItem,
+}
+
+var HomeNavItem = NavItem{"Home", "/"}
+var AboutNavItem = NavItem{"About", "/about"}
 
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	if td == nil {
@@ -26,6 +43,15 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	td.CSRFToken = nosurf.Token(r)
 	td.Flash = app.session.PopString(r, "flash")
 	td.IsAuthenticated = app.isAuthenticated(r)
+	td.NavItems = DefaultNavItems
+
+	if td.IsAuthenticated {
+		user, err := app.users.Get(app.session.GetInt(r, "authenticatedUserID"))
+		if err == nil {
+			td.User = &models.User{Name: user.Name, Email: user.Email}
+		}
+	}
+
 	return td
 }
 

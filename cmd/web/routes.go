@@ -27,6 +27,7 @@ func (app *application) routes() http.Handler {
 		r.Use(app.authenticate)
 
 		r.Get("/", app.home)
+		r.Get("/about", app.about)
 
 		r.Route("/user", func(r chi.Router) {
 			r.Get("/signup", app.signupUserForm)
