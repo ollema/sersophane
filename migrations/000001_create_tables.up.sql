@@ -9,7 +9,7 @@ CREATE TYPE event_type AS enum (
 CREATE TABLE IF NOT EXISTS events (
     id bigserial PRIMARY KEY,
     name text NOT NULL,
-    event_type event_type NOT NULL,
+    type event_type NOT NULL,
     created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
     start_at timestamp(0) WITH time zone NOT NULL,
     end_at timestamp(0) WITH time zone NOT NULL,

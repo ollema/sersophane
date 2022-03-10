@@ -11,30 +11,45 @@ import (
 	"os"
 	"time"
 
+	"github.com/golangcollege/sessions"
 	_ "github.com/lib/pq"
+	"github.com/ollema/sersophane/pkg/models"
+	"github.com/ollema/sersophane/pkg/models/postgres"
 )
 
 type config struct {
-	port int
-	db   struct {
+	db struct {
 		dsn string
 	}
+	port   int
+	secret string
 }
 
 type application struct {
-	log           *log.Logger
+	logger        *log.Logger
+	session       *sessions.Session
 	templateCache map[string]*template.Template
+	users         interface {
+		Insert(string, string, string) error
+		Authenticate(string, string) (int, error)
+		Get(int) (*models.User, error)
+	}
 }
+
+type contextKey string
+
+const contextKeyIsAuthenticated contextKey = "isAuthenticated"
 
 func main() {
 	var cfg config
-	flag.IntVar(&cfg.port, "port", 4000, "Port")
-	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("SERSOPHANE_DB_DSN"), "PostgreSQL DSN")
+	flag.IntVar(&cfg.port, "port", 4000, "port")
+	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("SERSOPHANE_DB_DSN"), "postgres dsn")
+	flag.StringVar(&cfg.secret, "secret", os.Getenv("SERSOPHANE_SECRET"), "secret (for encrypting session)")
 	flag.Parse()
 
 	addr := fmt.Sprintf(":%d", cfg.port)
 
-	log := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 	db, err := openDB(cfg)
 	if err != nil {
@@ -47,12 +62,18 @@ func main() {
 		log.Fatal(err)
 	}
 
+	session := sessions.New([]byte(cfg.secret))
+	session.Lifetime = 12 * time.Hour
+	session.Secure = true
+
 	app := &application{
-		log:           log,
+		logger:        logger,
+		session:       session,
 		templateCache: templateCache,
+		users:         &postgres.UserModel{DB: db},
 	}
 
-	log.Printf("Staring server on http://localhost%s", addr)
+	log.Printf("Starting server on http://localhost%s", addr)
 	err = http.ListenAndServe(addr, app.routes())
 	log.Fatal(err)
 }

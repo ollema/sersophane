@@ -3,14 +3,34 @@ package main
 import (
 	"html/template"
 	"io/fs"
+	"net/http"
 	"path/filepath"
+	"strings"
 
+	"github.com/justinas/nosurf"
+	"github.com/ollema/sersophane/pkg/forms"
 	"github.com/ollema/sersophane/ui"
 )
 
 type templateData struct {
-	CSRFToken string
-	Flash     string
+	CSRFToken       string
+	Flash           string
+	Form            *forms.Form
+	IsAuthenticated bool
+}
+
+func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
+	if td == nil {
+		td = &templateData{}
+	}
+	td.CSRFToken = nosurf.Token(r)
+	td.Flash = app.session.PopString(r, "flash")
+	td.IsAuthenticated = app.isAuthenticated(r)
+	return td
+}
+
+var functions = template.FuncMap{
+	"toLower": strings.ToLower,
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
@@ -24,7 +44,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		ts, err := template.New(name).ParseFS(ui.Files, page)
+		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, page)
 		if err != nil {
 			return nil, err
 		}
