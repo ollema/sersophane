@@ -37,6 +37,19 @@ func (app *application) routes() http.Handler {
 			r.Post("/login", app.loginUser)
 			r.With(app.requireAuthentication).Post("/logout", app.logoutUser)
 		})
+
+		r.Route("/events", func(r chi.Router) {
+			r.Get("/", app.listEvents)
+			r.Get("/create", app.createEventForm)
+			r.Post("/create", app.createEvent)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Use(app.eventCtx)
+				r.Get("/", app.getEvent)
+				r.Put("/", app.updateEvent)
+				r.Delete("/", app.deleteEvent)
+			})
+		})
 	})
 
 	fileServer := http.FileServer(http.FS(ui.Files))

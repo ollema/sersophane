@@ -1,0 +1,98 @@
+{{template "base" .}}
+
+{{define "title"}}Create a new event{{end}}
+
+{{define "header"}}Create a new event{{end}}
+
+{{define "main"}}
+<div class="min-h-full justify-center flex">
+    <div class="max-w-3xl w-full">
+        <form action="#" method="POST">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <div class="shadow overflow-hidden sm:rounded-md">
+                <div class="px-4 py-5 bg-white sm:p-6">
+                    <div class="grid grid-cols-6 gap-6">
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="name" class="block text-sm font-medium text-gray-700">Event name</label>
+                            <input type="text" name="name" id="name" autocomplete="event-name" autofocus
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="venue" class="block text-sm font-medium text-gray-700">Venue</label>
+                            <input type="text" list="venues" name="venue" id="venue" autocomplete="venue"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <datalist id="venues">
+                                <option value="Pustervik">
+                                <option value="Trädgårn">
+                                <option value="The Abyss">
+                            </datalist>
+                        </div>
+
+                        <fieldset class="col-span-6 sm:col-span-3 row-span-2">
+                            <div>
+                                <legend class="block text-sm font-medium text-gray-700">Event type</legend>
+                            </div>
+                            <div class="mt-4 space-y-4">
+                                <div class="flex items-center">
+                                    <input id="concert" name="type" type="radio" checked
+                                        class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                                    <label for="concert" class="ml-3 block text-sm font-medium text-gray-700"> Concert </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="festival" name="type" type="radio"
+                                        class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                                    <label for="festival" class="ml-3 block text-sm font-medium text-gray-700"> Festival </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="film" name="type" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                                    <label for="film" class="ml-3 block text-sm font-medium text-gray-700"> Film </label>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="" class="block text-sm font-medium text-gray-700">Date</label>
+                            <input type="date" name="start-at" id="start-at"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="" class="block text-sm font-medium text-gray-700">Duration (in days)</label>
+                            <input type="number" name="duration" id="duration" min="1" max="14" value="1"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="type" class="block text-sm font-medium text-gray-700">Event type</label>
+                            <input type="text" list="event-types" name="type" id="type" autocomplete="type"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <datalist id="event-types">
+                                <option value="United States">
+                                <option value="Canada">
+                                <option value="Mexico">
+                            </datalist>
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="type" class="block text-sm font-medium text-gray-700">Event type</label>
+                            <input type="text" list="event-types" name="type" id="type" autocomplete="type"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <datalist id="event-types">
+                                <option value="United States">
+                                <option value="Canada">
+                                <option value="Mexico">
+                            </datalist>
+                        </div>
+                    </div>
+
+                    <div class="text-right mt-5">
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

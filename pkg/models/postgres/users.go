@@ -17,8 +17,7 @@ func (m *UserModel) Insert(name, email, password string) error {
 	if err != nil {
 		return err
 	}
-	query := `
-        INSERT INTO users (name, email, password_hash, active) VALUES ($1, $2, $3, true)`
+	query := `INSERT INTO users (name, email, password_hash, active) VALUES ($1, $2, $3, true)`
 	args := []interface{}{name, email, hashedPassword}
 
 	_, err = m.DB.Exec(query, args...)
@@ -26,6 +25,8 @@ func (m *UserModel) Insert(name, email, password string) error {
 		switch {
 		case err.Error() == `pq: duplicate key value violates unique constraint "users_email_key"`:
 			return models.ErrDuplicateEmail
+		case err.Error() == `pq: duplicate key value violates unique constraint "users_name_key"`:
+			return models.ErrDuplicateName
 		default:
 			return err
 		}
@@ -64,9 +65,10 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 
 func (m *UserModel) Get(id int) (*models.User, error) {
 	u := &models.User{}
-	stmt := `SELECT id, name, created_at, email, active FROM users WHERE id = $1`
+	query := `SELECT id, name, created_at, email, active FROM users WHERE id = $1`
+	args := []interface{}{id}
 
-	err := m.DB.QueryRow(stmt, id).Scan(&u.ID, &u.Name, &u.CreatedAt, &u.Email, &u.Active)
+	err := m.DB.QueryRow(query, args...).Scan(&u.ID, &u.Name, &u.CreatedAt, &u.Email, &u.Active)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord

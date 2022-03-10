@@ -12,8 +12,7 @@ CREATE TABLE IF NOT EXISTS events (
     type event_type NOT NULL,
     created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
     start_at timestamp(0) WITH time zone NOT NULL,
-    end_at timestamp(0) WITH time zone NOT NULL,
-    venue text NOT NULL
+    end_at timestamp(0) WITH time zone NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS artists (

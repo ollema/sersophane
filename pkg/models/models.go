@@ -9,6 +9,7 @@ var (
 	ErrNoRecord           = errors.New("models: no matching records found")
 	ErrInvalidCredentials = errors.New("models: invalid credentials")
 	ErrDuplicateEmail     = errors.New("models: duplicate email")
+	ErrDuplicateName      = errors.New("models: duplicate name")
 )
 
 type EventType string
@@ -26,7 +27,6 @@ type Event struct {
 	CreatedAt time.Time
 	StartAt   time.Time
 	EndAt     time.Time
-	Venue     string
 }
 
 type Artist struct {

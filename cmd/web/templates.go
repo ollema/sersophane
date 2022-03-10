@@ -15,6 +15,7 @@ import (
 
 type templateData struct {
 	CSRFToken       string
+	Event           *models.Event
 	Flash           string
 	Form            *forms.Form
 	IsAuthenticated bool

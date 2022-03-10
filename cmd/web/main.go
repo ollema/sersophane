@@ -34,11 +34,18 @@ type application struct {
 		Authenticate(string, string) (int, error)
 		Get(int) (*models.User, error)
 	}
+	events interface {
+		Insert(string, models.EventType, time.Time, time.Time) error
+		Get(int) (*models.Event, error)
+	}
 }
 
 type contextKey string
 
-const contextKeyIsAuthenticated contextKey = "isAuthenticated"
+const (
+	contextKeyIsAuthenticated contextKey = "isAuthenticated"
+	contextKeyEvent           contextKey = "event"
+)
 
 func main() {
 	var cfg config
@@ -71,6 +78,7 @@ func main() {
 		session:       session,
 		templateCache: templateCache,
 		users:         &postgres.UserModel{DB: db},
+		events:        &postgres.EventModel{DB: db},
 	}
 
 	log.Printf("Starting server on http://localhost%s", addr)
