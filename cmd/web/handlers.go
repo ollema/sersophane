@@ -16,6 +16,10 @@ func (app *application) about(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "about.page.html", &templateData{ActiveNavItem: AboutNavItem})
 }
 
+func (app *application) profile(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "profile.page.html", &templateData{})
+}
+
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "signup.page.html", &templateData{Form: forms.New(nil)})
 }

@@ -30,6 +30,7 @@ func (app *application) routes() http.Handler {
 		r.Get("/about", app.about)
 
 		r.Route("/user", func(r chi.Router) {
+			r.With(app.requireAuthentication).Get("/", app.profile)
 			r.Get("/signup", app.signupUserForm)
 			r.Post("/signup", app.signupUser)
 			r.Get("/login", app.loginUserForm)
