@@ -29,6 +29,7 @@ type application struct {
 	artists interface {
 		Insert(string) error
 		Get(int) (*models.Artist, error)
+		GetAll(filters *models.Filters) ([]*models.Artist, error)
 	}
 	events interface {
 		Insert(string, models.EventType, time.Time, time.Time) error
@@ -45,17 +46,19 @@ type application struct {
 	venues interface {
 		Insert(string) error
 		Get(int) (*models.Venue, error)
-		GetAll(filters postgres.Filters) ([]*models.Venue, error)
+		GetAll(filters *models.Filters) ([]*models.Venue, error)
 	}
 }
 
 type contextKey string
 
 const (
-	contextKeyEvent           contextKey = "event"
 	contextKeyArtist          contextKey = "artist"
+	contextKeyArtists         contextKey = "artists"
+	contextKeyEvent           contextKey = "event"
 	contextKeyIsAuthenticated contextKey = "isAuthenticated"
 	contextKeyVenue           contextKey = "venue"
+	contextKeyVenues          contextKey = "venues"
 )
 
 func main() {

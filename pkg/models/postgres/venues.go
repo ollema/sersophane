@@ -46,11 +46,11 @@ func (m *VenueModel) Get(id int) (*models.Venue, error) {
 	return a, nil
 }
 
-func (m *VenueModel) GetAll(filters Filters) ([]*models.Venue, error) {
+func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, error) {
 	query := fmt.Sprintf(
 		`SELECT id, name FROM venues ORDER BY %s %s LIMIT $1 OFFSET $2`,
 		filters.SortBy, filters.SortDirection)
-	args := []interface{}{filters.limit(), filters.offset()}
+	args := []interface{}{filters.Limit(), filters.Offset()}
 
 	rows, err := m.DB.Query(query, args...)
 	if err != nil {

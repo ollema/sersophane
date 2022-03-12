@@ -15,6 +15,7 @@ import (
 
 type templateData struct {
 	Artist          *models.Artist
+	Artists         []*models.Artist
 	CSRFToken       string
 	Event           *models.Event
 	Flash           string
@@ -67,6 +68,7 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 
 var functions = template.FuncMap{
 	"toLower": strings.ToLower,
+	"title":   strings.Title,
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {

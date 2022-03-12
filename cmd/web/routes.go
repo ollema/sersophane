@@ -52,9 +52,14 @@ func (app *application) routes() http.Handler {
 		})
 
 		r.Route("/artists", func(r chi.Router) {
-			r.Get("/", app.listArtists)
-			r.With(app.requireAuthentication).Post("/create", app.createArtist)
+			// get all artists as ctx
+			r.Group(func(r chi.Router) {
+				r.Use(app.artistsCtx)
+				r.Get("/", app.listArtists)
+				r.With(app.requireAuthentication).Post("/create", app.createArtist)
+			})
 
+			// get a single artist as ctx
 			r.Route("/{id}", func(r chi.Router) {
 				r.Use(app.artistCtx)
 				r.Get("/", app.getArtist)
@@ -64,9 +69,14 @@ func (app *application) routes() http.Handler {
 		})
 
 		r.Route("/venues", func(r chi.Router) {
-			r.Get("/", app.listVenues)
-			r.With(app.requireAuthentication).Post("/create", app.createVenue)
+			// get all venues as ctx
+			r.Group(func(r chi.Router) {
+				r.Use(app.venuesCtx)
+				r.Get("/", app.listVenues)
+				r.With(app.requireAuthentication).Post("/create", app.createVenue)
+			})
 
+			// get a single venue as ctx
 			r.Route("/{id}", func(r chi.Router) {
 				r.Use(app.venueCtx)
 				r.Get("/", app.getVenue)

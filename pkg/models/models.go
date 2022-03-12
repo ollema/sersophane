@@ -10,6 +10,7 @@ var (
 	ErrInvalidCredentials = errors.New("models: invalid credentials")
 	ErrDuplicateEmail     = errors.New("models: duplicate email")
 	ErrDuplicateName      = errors.New("models: duplicate name")
+	ErrInvalidFilters     = errors.New("models: invalid query filters")
 )
 
 type EventType string

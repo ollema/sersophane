@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/ollema/sersophane/pkg/models"
 )
@@ -43,4 +44,33 @@ func (m *ArtistModel) Get(id int) (*models.Artist, error) {
 	}
 
 	return a, nil
+}
+
+func (m *ArtistModel) GetAll(filters *models.Filters) ([]*models.Artist, error) {
+	query := fmt.Sprintf(
+		`SELECT id, name FROM artists ORDER BY %s %s LIMIT $1 OFFSET $2`,
+		filters.SortBy, filters.SortDirection)
+	args := []interface{}{filters.Limit(), filters.Offset()}
+
+	rows, err := m.DB.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	artists := []*models.Artist{}
+	for rows.Next() {
+		var artist models.Artist
+		err := rows.Scan(&artist.ID, &artist.Name)
+		if err != nil {
+			return nil, err
+		}
+		artists = append(artists, &artist)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return artists, nil
 }

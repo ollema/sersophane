@@ -9,7 +9,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/ollema/sersophane/pkg/forms"
 	"github.com/ollema/sersophane/pkg/models"
-	"github.com/ollema/sersophane/pkg/models/postgres"
 )
 
 func (app *application) venueCtx(next http.Handler) http.Handler {
@@ -20,7 +19,7 @@ func (app *application) venueCtx(next http.Handler) http.Handler {
 			return
 		}
 
-		e, err := app.venues.Get(id)
+		venue, err := app.venues.Get(id)
 		if err != nil {
 			if errors.Is(err, models.ErrNoRecord) {
 				app.clientError(w, http.StatusNotFound)
@@ -30,29 +29,38 @@ func (app *application) venueCtx(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), contextKeyVenue, e)
+		ctx := context.WithValue(r.Context(), contextKeyVenue, venue)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (app *application) venuesCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sortableColumns := map[string]struct{}{"name": {}, "-name": {}}
+		filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "name")
+		if err != nil {
+			app.clientError(w, http.StatusNotFound)
+			return
+		}
+		venues, err := app.venues.GetAll(filters)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), contextKeyVenues, venues)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func (app *application) listVenues(w http.ResponseWriter, r *http.Request) {
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	if err != nil {
-		page = 1
-	}
-
-	filters := postgres.NewFilters(page, "name", "ASC")
-
-	venues, err := app.venues.GetAll(filters)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
+	venues := r.Context().Value(contextKeyVenues).([]*models.Venue)
 	app.render(w, r, "venue.list.page.html", &templateData{Form: &forms.Form{}, Venues: venues})
 }
 
 func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
+	venues := r.Context().Value(contextKeyVenues).([]*models.Venue)
+
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
@@ -64,7 +72,7 @@ func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 	form.MaxLength("name", 100)
 
 	if !form.Valid() {
-		app.render(w, r, "venue.list.page.html", &templateData{Form: form})
+		app.render(w, r, "venue.list.page.html", &templateData{Form: form, Venues: venues})
 		return
 	}
 
@@ -72,7 +80,7 @@ func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateName) {
 			form.Errors.Add("name", "Venue already exists")
-			app.render(w, r, "venue.list.page.html", &templateData{Form: form})
+			app.render(w, r, "venue.list.page.html", &templateData{Form: form, Venues: venues})
 		} else {
 			app.serverError(w, err)
 		}
