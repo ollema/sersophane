@@ -1,0 +1,37 @@
+{{template "base" .}}
+
+{{define "title"}}Artists{{end}}
+
+{{define "header"}}Artists{{end}}
+
+{{define "main"}}
+    {{if .IsAuthenticated}}
+        <div x-data='{ open: {{if .Form.Errors}}true{{else}}false{{end}} }'>
+            <button @click="open = ! open" class="btn-primary">Add new artist</button>
+            <div x-show="open" class="max-w-lg mt-4 shadow-md rounded-lg overflow-hidden">
+                <div class="px-4 py-5 bg-white">
+                    <form action="/artists/create" method="POST" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        {{with .Form}}
+                            <label for="name" class="label-primary">Name</label>
+                            {{with .Errors.Get "name"}}
+                                <div class="flex p-4 my-5 bg-red-100 rounded-lg" role="alert">
+                                    <svg class="flex-shrink-0 w-5 h-5 text-red-700" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                    <div class="ml-3 text-sm font-medium text-red-700">
+                                        <span class="font-medium">Error:</span> {{. | toLower}}.
+                                    </div>
+                                </div>
+                            {{end}}
+                            <div class="relative">
+                                <input type="text" name="name" id="name" autocomplete="artist-name" class="input-primary">
+                                <button type="submit" class="btn-submit-inline">OK</button>
+                            </div>
+                        {{end}}
+                    </form>
+                </div>
+            </div>
+        </div>
+    {{end}}
+
+    <div class="mt-4">list of artists...</div>
+{{end}}

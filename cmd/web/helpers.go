@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
-	"runtime/debug"
+
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
-	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
-	app.logger.Output(2, trace)
+	app.logger.Println(err)
+	middleware.PrintPrettyStack(app.logger.Writer())
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 

@@ -9,11 +9,11 @@ import (
 )
 
 func (app *application) profile(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "profile.page.html", &templateData{})
+	app.render(w, r, "user.profile.page.html", &templateData{})
 }
 
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "signup.page.html", &templateData{Form: forms.New(nil)})
+	app.render(w, r, "user.signup.page.html", &templateData{Form: forms.New(nil)})
 }
 
 func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +31,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	form.MinLength("password", 10)
 
 	if !form.Valid() {
-		app.render(w, r, "signup.page.html", &templateData{Form: form})
+		app.render(w, r, "user.signup.page.html", &templateData{Form: form})
 		return
 	}
 
@@ -39,7 +39,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateEmail) {
 			form.Errors.Add("email", "Address is already in use")
-			app.render(w, r, "signup.page.html", &templateData{Form: form})
+			app.render(w, r, "user.signup.page.html", &templateData{Form: form})
 		} else {
 			app.serverError(w, err)
 		}
@@ -51,7 +51,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "login.page.html", &templateData{Form: forms.New(nil)})
+	app.render(w, r, "user.login.page.html", &templateData{Form: forms.New(nil)})
 }
 
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +66,7 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
 			form.Errors.Add("generic", "Email or Password is incorrect")
-			app.render(w, r, "login.page.html", &templateData{Form: form})
+			app.render(w, r, "user.login.page.html", &templateData{Form: form})
 		} else {
 			app.serverError(w, err)
 		}

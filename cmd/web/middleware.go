@@ -60,7 +60,7 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		if !user.Active {
+		if !user.Activated {
 			app.session.Remove(r, "authenticatedUserID")
 			next.ServeHTTP(w, r)
 			return

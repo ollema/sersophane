@@ -18,7 +18,7 @@ func (m *ArtistModel) Insert(name string) error {
 	_, err := m.DB.Exec(query, args...)
 	if err != nil {
 		switch {
-		case err.Error() == `pq: duplicate key value violates unique constraint "artists_name_key`:
+		case err.Error() == `pq: duplicate key value violates unique constraint "artists_name_key"`:
 			return models.ErrDuplicateName
 		default:
 			return err

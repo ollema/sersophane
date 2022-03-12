@@ -35,6 +35,7 @@ func (app *application) eventCtx(next http.Handler) http.Handler {
 }
 
 func (app *application) listEvents(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "event.list.page.html", &templateData{})
 }
 
 func (app *application) createEventForm(w http.ResponseWriter, r *http.Request) {

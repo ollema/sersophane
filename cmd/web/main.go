@@ -26,6 +26,14 @@ type config struct {
 }
 
 type application struct {
+	artists interface {
+		Insert(string) error
+		Get(int) (*models.Artist, error)
+	}
+	events interface {
+		Insert(string, models.EventType, time.Time, time.Time) error
+		Get(int) (*models.Event, error)
+	}
 	logger        *log.Logger
 	session       *sessions.Session
 	templateCache map[string]*template.Template
@@ -34,17 +42,20 @@ type application struct {
 		Authenticate(string, string) (int, error)
 		Get(int) (*models.User, error)
 	}
-	events interface {
-		Insert(string, models.EventType, time.Time, time.Time) error
-		Get(int) (*models.Event, error)
+	venues interface {
+		Insert(string) error
+		Get(int) (*models.Venue, error)
+		GetAll(filters postgres.Filters) ([]*models.Venue, error)
 	}
 }
 
 type contextKey string
 
 const (
-	contextKeyIsAuthenticated contextKey = "isAuthenticated"
 	contextKeyEvent           contextKey = "event"
+	contextKeyArtist          contextKey = "artist"
+	contextKeyIsAuthenticated contextKey = "isAuthenticated"
+	contextKeyVenue           contextKey = "venue"
 )
 
 func main() {
@@ -71,14 +82,16 @@ func main() {
 
 	session := sessions.New([]byte(cfg.secret))
 	session.Lifetime = 12 * time.Hour
-	session.Secure = true
+	// session.Secure = true  TODO: set true in prod
 
 	app := &application{
+		artists:       &postgres.ArtistModel{DB: db},
+		events:        &postgres.EventModel{DB: db},
 		logger:        logger,
 		session:       session,
 		templateCache: templateCache,
 		users:         &postgres.UserModel{DB: db},
-		events:        &postgres.EventModel{DB: db},
+		venues:        &postgres.VenueModel{DB: db},
 	}
 
 	log.Printf("Starting server on http://localhost%s", addr)

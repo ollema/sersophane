@@ -27,9 +27,15 @@ type Event struct {
 	CreatedAt time.Time
 	StartAt   time.Time
 	EndAt     time.Time
+	Cancelled bool
 }
 
 type Artist struct {
+	ID   int
+	Name string
+}
+
+type Venue struct {
 	ID   int
 	Name string
 }
@@ -40,5 +46,5 @@ type User struct {
 	CreatedAt time.Time
 	Email     string
 	Password  []byte
-	Active    bool
+	Activated bool
 }

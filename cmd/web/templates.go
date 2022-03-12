@@ -14,6 +14,7 @@ import (
 )
 
 type templateData struct {
+	Artist          *models.Artist
 	CSRFToken       string
 	Event           *models.Event
 	Flash           string
@@ -22,6 +23,8 @@ type templateData struct {
 	NavItems        []NavItem
 	ActiveNavItem   NavItem
 	User            *models.User
+	Venue           *models.Venue
+	Venues          []*models.Venue
 }
 
 type NavItem struct {
@@ -31,10 +34,16 @@ type NavItem struct {
 
 var DefaultNavItems []NavItem = []NavItem{
 	HomeNavItem,
+	EventsNavItem,
+	ArtistsNavItem,
+	VenuesNavItem,
 	AboutNavItem,
 }
 
 var HomeNavItem = NavItem{"Home", "/"}
+var EventsNavItem = NavItem{"Events", "/events"}
+var ArtistsNavItem = NavItem{"Artists", "/artists"}
+var VenuesNavItem = NavItem{"Venues", "/venues"}
 var AboutNavItem = NavItem{"About", "/about"}
 
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {

@@ -40,14 +40,38 @@ func (app *application) routes() http.Handler {
 
 		r.Route("/events", func(r chi.Router) {
 			r.Get("/", app.listEvents)
-			r.Get("/create", app.createEventForm)
-			r.Post("/create", app.createEvent)
+			r.With(app.requireAuthentication).Get("/create", app.createEventForm)
+			r.With(app.requireAuthentication).Post("/create", app.createEvent)
 
 			r.Route("/{id}", func(r chi.Router) {
 				r.Use(app.eventCtx)
 				r.Get("/", app.getEvent)
-				r.Put("/", app.updateEvent)
-				r.Delete("/", app.deleteEvent)
+				r.With(app.requireAuthentication).Put("/", app.updateEvent)
+				r.With(app.requireAuthentication).Delete("/", app.deleteEvent)
+			})
+		})
+
+		r.Route("/artists", func(r chi.Router) {
+			r.Get("/", app.listArtists)
+			r.With(app.requireAuthentication).Post("/create", app.createArtist)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Use(app.artistCtx)
+				r.Get("/", app.getArtist)
+				r.With(app.requireAuthentication).Put("/", app.updateArtist)
+				r.With(app.requireAuthentication).Delete("/", app.deleteArtist)
+			})
+		})
+
+		r.Route("/venues", func(r chi.Router) {
+			r.Get("/", app.listVenues)
+			r.With(app.requireAuthentication).Post("/create", app.createVenue)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Use(app.venueCtx)
+				r.Get("/", app.getVenue)
+				r.With(app.requireAuthentication).Put("/", app.updateVenue)
+				r.With(app.requireAuthentication).Delete("/", app.deleteVenue)
 			})
 		})
 	})

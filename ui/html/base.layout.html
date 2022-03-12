@@ -10,31 +10,29 @@
         <script defer src="https://unpkg.com/alpinejs@3.9.1/dist/cdn.min.js"></script>
     </head>
 
-    <body class="h-full">
-        <div class="min-h-full">
-            {{template "navbar" .}}
+    <body class="flex flex-col min-h-screen">
+        {{template "navbar" .}}
 
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl font-bold text-gray-900">{{template "header" .}}</h1>
-                </div>
-            </header>
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold text-gray-900">{{template "header" .}}</h1>
+            </div>
+        </header>
 
-            <main>
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{with .Flash}}
-                        <div class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg" role="alert">{{.}}</div>
-                    {{end}}
-                    {{template "main" .}}
-                </div>
-            </main>
+        <main class="flex-auto">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                {{with .Flash}}
+                    <div class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg" role="alert">{{.}}</div>
+                {{end}}
+                {{template "main" .}}
+            </div>
+        </main>
 
-            <footer class="absolute inset-x-0 bottom-0 bg-gray-200 text-center ">
-                <div class="text-gray-700 text-center p-4">
-                    Powered by <a href="https://golang.org/">Go</a>
-                </div>
-            </footer>
-        </div>
+        <footer class="mt-auto bg-gray-200 text-center">
+            <div class="text-gray-700 text-center p-4">
+                Powered by <a href="https://golang.org/">Go</a>
+            </div>
+        </footer>
     </body>
 </html>
 {{end}}

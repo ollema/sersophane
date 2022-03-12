@@ -17,7 +17,7 @@ func (m *UserModel) Insert(name, email, password string) error {
 	if err != nil {
 		return err
 	}
-	query := `INSERT INTO users (name, email, password_hash, active) VALUES ($1, $2, $3, true)`
+	query := `INSERT INTO users (name, email, password_hash, activated) VALUES ($1, $2, $3, TRUE)`
 	args := []interface{}{name, email, hashedPassword}
 
 	_, err = m.DB.Exec(query, args...)
@@ -38,7 +38,7 @@ func (m *UserModel) Insert(name, email, password string) error {
 func (m *UserModel) Authenticate(email, password string) (int, error) {
 	var id int
 	var hashedPassword []byte
-	query := `SELECT id, password_hash FROM users WHERE email = $1 AND active = TRUE`
+	query := `SELECT id, password_hash FROM users WHERE email = $1 AND activated = TRUE`
 	args := []interface{}{email}
 
 	row := m.DB.QueryRow(query, args...)
@@ -65,10 +65,10 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 
 func (m *UserModel) Get(id int) (*models.User, error) {
 	u := &models.User{}
-	query := `SELECT id, name, created_at, email, active FROM users WHERE id = $1`
+	query := `SELECT id, name, created_at, email, activated FROM users WHERE id = $1`
 	args := []interface{}{id}
 
-	err := m.DB.QueryRow(query, args...).Scan(&u.ID, &u.Name, &u.CreatedAt, &u.Email, &u.Active)
+	err := m.DB.QueryRow(query, args...).Scan(&u.ID, &u.Name, &u.CreatedAt, &u.Email, &u.Activated)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord
