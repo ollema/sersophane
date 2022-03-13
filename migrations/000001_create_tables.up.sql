@@ -1,6 +1,6 @@
 BEGIN;
 
-CREATE COLLATION swedish (locale='sv_SE.utf8');
+CREATE COLLATION IF NOT EXISTS swedish (locale='sv_SE.utf8');
 
 CREATE TYPE event_type AS enum (
     'concert',
@@ -104,9 +104,13 @@ VALUES
     ('Bombus'),
     ('Graveyard'),
     ('Gösta Berlings Saga'),
+    ('Hammers of Misfortune'),
     ('Hällas'),
+    ('OM'),
     ('Skraeckoedlan'),
+    ('Sleep'),
     ('Vampire'),
+    ('Vastum'),
     ('YOB');
 
 COMMIT;
