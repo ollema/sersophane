@@ -1,38 +1,49 @@
 {{define "base"}}
-<!doctype HTML>
-<html class="h-full bg-gray-100" lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>{{template "title" .}} - Sersophane</title>
-        <link rel="stylesheet" href="/static/css/main.css">
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-        <link rel="shortcut icon" href="/static/img/favicon.img" type="image/x-icon">
-        <script defer src="https://unpkg.com/alpinejs@3.9.1/dist/cdn.min.js"></script>
-    </head>
+    <!doctype HTML>
+    <html class="h-full bg-gray-100 overflow-y-scroll" lang="en">
+        <head>
+            <meta charset="utf-8">
+            <title>{{template "title" .}}</title>
+            <meta name="description" content="Website for keeping track of upcoming events.">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <body class="flex flex-col min-h-screen">
-        {{template "navbar" .}}
+            <meta property="og:title" content="Sersophane">
+            <meta property="og:type" content="website">
+            <meta property="og:url" content="https://sersophane.com">
+            <meta property="og:image" content="/static/img/favicon-180.png">
 
-        <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold text-gray-900">{{template "header" .}}</h1>
-            </div>
-        </header>
+            <link rel="icon" href="/static/img/favicon.ico">
+            <link rel="apple-touch-icon-precomposed" href="/static/img/favicon-180.png">
 
-        <main class="flex-auto">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                {{with .Flash}}
-                    <div class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg" role="alert">{{.}}</div>
-                {{end}}
-                {{template "main" .}}
-            </div>
-        </main>
+            <link rel="stylesheet" href="/static/css/main.css">
+            <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
-        <footer class="mt-auto bg-gray-200 text-center">
-            <div class="text-gray-700 text-center p-4">
-                Powered by <a href="https://golang.org/">Go</a>
-            </div>
-        </footer>
-    </body>
-</html>
+            <script defer src="https://unpkg.com/alpinejs@3.9.1/dist/cdn.min.js"></script>
+        </head>
+
+        <body class="flex flex-col min-h-screen">
+            {{template "navbar" .}}
+
+            <header class="bg-white shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl font-bold text-gray-900">{{template "header" .}}</h1>
+                </div>
+            </header>
+
+            <main class="flex-auto">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    {{with .Flash}}
+                        <div class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg" role="alert">{{.}}</div>
+                    {{end}}
+                    {{template "main" .}}
+                </div>
+            </main>
+
+            <footer class="mt-auto bg-gray-200 text-center">
+                <div class="text-gray-700 text-center p-4">
+                    Powered by <a href="https://golang.org/">Go</a>
+                </div>
+            </footer>
+        </body>
+    </html>
 {{end}}

@@ -36,7 +36,10 @@ func (app *application) venueCtx(next http.Handler) http.Handler {
 
 func (app *application) venuesCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sortableColumns := map[string]struct{}{"name": {}, "-name": {}}
+		sortableColumns := map[string]struct{}{
+			"name": {}, "-name": {},
+			"city": {}, "-city": {},
+		}
 		filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "name")
 		if err != nil {
 			app.clientError(w, http.StatusNotFound)
@@ -70,15 +73,16 @@ func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := forms.New(r.PostForm)
-	form.Required("name")
+	form.Required("name", "city")
 	form.MaxLength("name", 100)
+	form.MaxLength("city", 100)
 
 	if !form.Valid() {
 		app.render(w, r, "venue.list.page.html", &templateData{Form: form, Venues: venues, Metadata: metadata})
 		return
 	}
 
-	err = app.venues.Insert(form.Get("name"))
+	err = app.venues.Insert(form.Get("name"), form.Get("city"))
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateName) {
 			form.Errors.Add("name", "Venue already exists")

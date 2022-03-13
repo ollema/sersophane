@@ -12,9 +12,9 @@ type VenueModel struct {
 	DB *sql.DB
 }
 
-func (m *VenueModel) Insert(name string) error {
-	query := `INSERT INTO venues (name) VALUES ($1)`
-	args := []interface{}{name}
+func (m *VenueModel) Insert(name, city string) error {
+	query := `INSERT INTO venues (name, city) VALUES ($1)`
+	args := []interface{}{name, city}
 
 	_, err := m.DB.Exec(query, args...)
 	if err != nil {
@@ -31,10 +31,10 @@ func (m *VenueModel) Insert(name string) error {
 
 func (m *VenueModel) Get(id int) (*models.Venue, error) {
 	venue := &models.Venue{}
-	query := `SELECT id, name FROM venues WHERE id = $1`
+	query := `SELECT id, name, city FROM venues WHERE id = $1`
 	args := []interface{}{id}
 
-	err := m.DB.QueryRow(query, args...).Scan(&venue.ID, &venue.Name)
+	err := m.DB.QueryRow(query, args...).Scan(&venue.ID, &venue.Name, &venue.City)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord
@@ -50,7 +50,7 @@ func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, *models.M
 	venues := []*models.Venue{}
 	totalRecords := 0
 	query := fmt.Sprintf(
-		`SELECT count(*) OVER(), id, name FROM venues
+		`SELECT count(*) OVER(), id, name, city FROM venues
 		ORDER BY %s %s LIMIT $1 OFFSET $2`,
 		filters.SortBy,
 		filters.SortDirection,
@@ -65,7 +65,7 @@ func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, *models.M
 
 	for rows.Next() {
 		var venue models.Venue
-		err := rows.Scan(&totalRecords, &venue.ID, &venue.Name)
+		err := rows.Scan(&totalRecords, &venue.ID, &venue.Name, &venue.City)
 		if err != nil {
 			return nil, &models.Metadata{}, err
 		}

@@ -23,3 +23,16 @@
         @apply w-full shadow-sm border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500
     }
 }
+
+@layer utilities {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    html::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+}

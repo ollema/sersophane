@@ -39,6 +39,7 @@ type Artist struct {
 type Venue struct {
 	ID   int
 	Name string
+	City string
 }
 
 type User struct {

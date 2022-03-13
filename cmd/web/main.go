@@ -45,7 +45,7 @@ type application struct {
 		Get(int) (*models.User, error)
 	}
 	venues interface {
-		Insert(string) error
+		Insert(string, string) error
 		Get(int) (*models.Venue, error)
 		GetAll(filters *models.Filters) ([]*models.Venue, *models.Metadata, error)
 	}
