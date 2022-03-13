@@ -1,6 +1,7 @@
 BEGIN;
 
 DROP TABLE IF EXISTS event_user;
+DROP TYPE IF EXISTS event_user_status;
 DROP TABLE IF EXISTS event_venue;
 DROP TABLE IF EXISTS event_artist;
 DROP TABLE IF EXISTS users;

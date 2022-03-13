@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS artists (
 
 CREATE TABLE IF NOT EXISTS venues (
     id bigserial PRIMARY KEY,
-    name citext UNIQUE NOT NULL
+    name citext UNIQUE NOT NULL,
+    city citext NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -47,10 +48,63 @@ CREATE TABLE IF NOT EXISTS event_venue (
     CONSTRAINT event_venue_key PRIMARY KEY (event_id, venue_id)
 );
 
+CREATE TYPE event_user_status AS enum (
+    'interested',
+    'going'
+);
+
 CREATE TABLE IF NOT EXISTS event_user (
     event_id bigint NOT NULL REFERENCES events (id) ON DELETE CASCADE,
     user_id bigint NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    event_user_status event_user_status NOT NULL,
     CONSTRAINT event_user_key PRIMARY KEY (event_id, user_id)
 );
+
+-- Add common venues
+INSERT INTO venues (name, city)
+VALUES
+    ('Bengans', 'Göteborg'),
+    ('Bio Roy', 'Göteborg'),
+    ('Brewhouse', 'Göteborg'),
+    ('DDRC', 'Göteborg'),
+    ('Fängelset', 'Göteborg'),
+    ('Liseberg', 'Göteborg'),
+    ('Musikens Hus', 'Göteborg'),
+    ('M/S Götapetter', 'Göteborg'),
+    ('Nefertiti', 'Göteborg'),
+    ('Oceanen', 'Göteborg'),
+    ('Pustervik', 'Göteborg'),
+    ('Skjul Fyra Sex', 'Göteborg'),
+    ('Sticky Fingers', 'Göteborg'),
+    ('Studio HKPSM', 'Göteborg'),
+    ('The Abyss', 'Göteborg'),
+    ('Trädgårn', 'Göteborg'),
+    ('Truckstop Alaska (RIP)', 'Göteborg'),
+    ('Ullevi', 'Göteborg'),
+    ('Valand', 'Göteborg'),
+
+    ('Annexet', 'Stockholm'),
+    ('Avicii Arena', 'Stockholm'),
+    ('Berns', 'Stockholm'),
+    ('Circus', 'Stockholm'),
+    ('Debaser', 'Stockholm'),
+    ('Fryshuset', 'Stockholm'),
+    ('Fållan', 'Stockholm'),
+    ('Kraken', 'Stockholm'),
+    ('Nalen', 'Stockholm'),
+    ('Slaktkyrkan', 'Stockholm'),
+
+    ('Plan B', 'Malmö');
+
+-- Add common artists
+INSERT INTO artists (name)
+VALUES
+    ('Bombus'),
+    ('Graveyard'),
+    ('Gösta Berlings Saga'),
+    ('Hällas'),
+    ('Skraeckoedlan'),
+    ('Vampire'),
+    ('YOB');
 
 COMMIT;
