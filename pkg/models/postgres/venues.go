@@ -13,7 +13,7 @@ type VenueModel struct {
 }
 
 func (m *VenueModel) Insert(name, city string) error {
-	query := `INSERT INTO venues (name, city) VALUES ($1)`
+	query := `INSERT INTO venues (name, city) VALUES ($1, $2)`
 	args := []interface{}{name, city}
 
 	_, err := m.DB.Exec(query, args...)
