@@ -34,14 +34,36 @@ func (app *application) eventCtx(next http.Handler) http.Handler {
 	})
 }
 
+func (app *application) eventsCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sortableColumns := map[string]struct{}{"name": {}}
+		filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "name")
+		if err != nil {
+			app.clientError(w, http.StatusNotFound)
+			return
+		}
+		events, metadata, err := app.events.GetAll(filters)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), contextKeyEvents, events)
+		ctx = context.WithValue(ctx, contextKeyMetadata, metadata)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
 func (app *application) listEvents(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "event.list.page.html", &templateData{})
+	events := r.Context().Value(contextKeyEvents).([]*models.Event)
+	metadata := r.Context().Value(contextKeyMetadata).(*models.Metadata)
+	app.render(w, r, "event.list.page.html", &templateData{Events: events, Metadata: metadata})
 }
 
 func (app *application) createEventForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "event.create.page.html", &templateData{
-		Form: forms.New(nil),
-	})
+	metadata := r.Context().Value(contextKeyMetadata).(*models.Metadata)
+	form := forms.New(r.PostForm)
+	app.render(w, r, "event.create.page.html", &templateData{Form: form, Metadata: metadata})
 }
 
 func (app *application) createEvent(w http.ResponseWriter, r *http.Request) {

@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"math"
 	"net/url"
 	"strconv"
 	"strings"
@@ -64,4 +65,26 @@ func (f *Filters) Limit() int {
 
 func (f *Filters) Offset() int {
 	return (f.Page - 1) * f.PageSize
+}
+
+type Metadata struct {
+	CurrentPage  int
+	PageSize     int
+	FirstPage    int
+	LastPage     int
+	TotalRecords int
+}
+
+func CalculateMetadata(totalRecords, page, pageSize int) *Metadata {
+	if totalRecords == 0 {
+		return &Metadata{}
+	}
+
+	return &Metadata{
+		CurrentPage:  page,
+		PageSize:     pageSize,
+		FirstPage:    1,
+		LastPage:     int(math.Ceil(float64(totalRecords) / float64(pageSize))),
+		TotalRecords: totalRecords,
+	}
 }

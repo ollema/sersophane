@@ -29,8 +29,42 @@
     {{end}}
 
     <div class="mt-4">
-        {{range $id, $venue := .Venues}}
-            <div>{{$venue.Name | title}}</div>
-        {{end}}
+        <div class="flex flex-col">
+            <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block py-2 min-w-full sm:px-6 lg:px-8">
+                    <div class="overflow-hidden shadow-md sm:rounded-lg">
+                        <table class="min-w-full">
+                            <thead class="bg-gradient-to-b from-gray-200 to-gray-300">
+                                <tr>
+                                    <th scope="col" class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase">
+                                        Name
+                                    </th>
+                                    <th scope="col" class="relative py-3 px-6">
+                                        <span class="sr-only">Edit</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range $id, $venue := .Venues}}
+                                    <tr class="border-b odd:bg-white even:bg-gray-50">
+                                        <td class="px-6 text-sm font-medium text-gray-900 whitespace-nowrap w-full">
+                                            <a href="/venues/{{$venue.ID}}" class="hover:underline py-2.5 w-full h-full inline-block">{{$venue.Name | title}}</a>
+                                        </td>
+                                        <td class="py-3 px-6 text-sm font-medium text-right whitespace-nowrap">
+                                            <!-- TODO something with auth and permissions to show -->
+                                            <a href="#" class="text-blue-600 hover:underline">Edit</a>
+                                        </td>
+                                    </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    {{with .Metadata}}
+        {{template "pagination" .}}
+    {{end}}
 {{end}}

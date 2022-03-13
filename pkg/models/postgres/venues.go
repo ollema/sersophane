@@ -30,11 +30,11 @@ func (m *VenueModel) Insert(name string) error {
 }
 
 func (m *VenueModel) Get(id int) (*models.Venue, error) {
-	a := &models.Venue{}
+	venue := &models.Venue{}
 	query := `SELECT id, name FROM venues WHERE id = $1`
 	args := []interface{}{id}
 
-	err := m.DB.QueryRow(query, args...).Scan(&a.ID, &a.Name)
+	err := m.DB.QueryRow(query, args...).Scan(&venue.ID, &venue.Name)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord
@@ -43,34 +43,40 @@ func (m *VenueModel) Get(id int) (*models.Venue, error) {
 		}
 	}
 
-	return a, nil
+	return venue, nil
 }
 
-func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, error) {
+func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, *models.Metadata, error) {
+	venues := []*models.Venue{}
+	totalRecords := 0
 	query := fmt.Sprintf(
-		`SELECT id, name FROM venues ORDER BY %s %s LIMIT $1 OFFSET $2`,
-		filters.SortBy, filters.SortDirection)
+		`SELECT count(*) OVER(), id, name FROM venues
+		ORDER BY %s %s LIMIT $1 OFFSET $2`,
+		filters.SortBy,
+		filters.SortDirection,
+	)
 	args := []interface{}{filters.Limit(), filters.Offset()}
 
 	rows, err := m.DB.Query(query, args...)
 	if err != nil {
-		return nil, err
+		return nil, &models.Metadata{}, err
 	}
 	defer rows.Close()
 
-	venues := []*models.Venue{}
 	for rows.Next() {
 		var venue models.Venue
-		err := rows.Scan(&venue.ID, &venue.Name)
+		err := rows.Scan(&totalRecords, &venue.ID, &venue.Name)
 		if err != nil {
-			return nil, err
+			return nil, &models.Metadata{}, err
 		}
 		venues = append(venues, &venue)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, &models.Metadata{}, err
 	}
 
-	return venues, nil
+	metadata := models.CalculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return venues, metadata, nil
 }

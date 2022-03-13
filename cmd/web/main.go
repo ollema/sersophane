@@ -29,11 +29,12 @@ type application struct {
 	artists interface {
 		Insert(string) error
 		Get(int) (*models.Artist, error)
-		GetAll(filters *models.Filters) ([]*models.Artist, error)
+		GetAll(filters *models.Filters) ([]*models.Artist, *models.Metadata, error)
 	}
 	events interface {
 		Insert(string, models.EventType, time.Time, time.Time) error
 		Get(int) (*models.Event, error)
+		GetAll(filters *models.Filters) ([]*models.Event, *models.Metadata, error)
 	}
 	logger        *log.Logger
 	session       *sessions.Session
@@ -46,7 +47,7 @@ type application struct {
 	venues interface {
 		Insert(string) error
 		Get(int) (*models.Venue, error)
-		GetAll(filters *models.Filters) ([]*models.Venue, error)
+		GetAll(filters *models.Filters) ([]*models.Venue, *models.Metadata, error)
 	}
 }
 
@@ -56,7 +57,9 @@ const (
 	contextKeyArtist          contextKey = "artist"
 	contextKeyArtists         contextKey = "artists"
 	contextKeyEvent           contextKey = "event"
+	contextKeyEvents          contextKey = "events"
 	contextKeyIsAuthenticated contextKey = "isAuthenticated"
+	contextKeyMetadata        contextKey = "metadata"
 	contextKeyVenue           contextKey = "venue"
 	contextKeyVenues          contextKey = "venues"
 )

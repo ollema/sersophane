@@ -5,5 +5,17 @@
 {{define "header"}}Events{{end}}
 
 {{define "main"}}
-    list of events...
+    {{if .IsAuthenticated}}
+        <button class="btn-primary">Add new event</button>
+    {{end}}
+
+    <div class="mt-4">
+        {{range $id, $event := .Events}}
+            <div>{{$event.Name | title}}, {{$event.Type}}, {{$event.CreatedAt}}, {{$event.StartAt}}, {{$event.EndAt}}, {{$event.Cancelled}}</div>
+        {{end}}
+    </div>
+
+    {{with .Metadata}}
+        {{template "pagination" .}}
+    {{end}}
 {{end}}

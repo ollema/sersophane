@@ -39,10 +39,11 @@ func (app *application) routes() http.Handler {
 		})
 
 		r.Route("/events", func(r chi.Router) {
-			r.Get("/", app.listEvents)
+			r.With(app.eventsCtx).Get("/", app.listEvents) // get all events as ctx
 			r.With(app.requireAuthentication).Get("/create", app.createEventForm)
 			r.With(app.requireAuthentication).Post("/create", app.createEvent)
 
+			// get a single event as ctx
 			r.Route("/{id}", func(r chi.Router) {
 				r.Use(app.eventCtx)
 				r.Get("/", app.getEvent)

@@ -42,25 +42,27 @@ func (app *application) venuesCtx(next http.Handler) http.Handler {
 			app.clientError(w, http.StatusNotFound)
 			return
 		}
-		venues, err := app.venues.GetAll(filters)
+		venues, metadata, err := app.venues.GetAll(filters)
 		if err != nil {
 			app.serverError(w, err)
 			return
 		}
 
 		ctx := context.WithValue(r.Context(), contextKeyVenues, venues)
+		ctx = context.WithValue(ctx, contextKeyMetadata, metadata)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func (app *application) listVenues(w http.ResponseWriter, r *http.Request) {
 	venues := r.Context().Value(contextKeyVenues).([]*models.Venue)
-	app.render(w, r, "venue.list.page.html", &templateData{Form: &forms.Form{}, Venues: venues})
+	metadata := r.Context().Value(contextKeyMetadata).(*models.Metadata)
+	app.render(w, r, "venue.list.page.html", &templateData{Form: &forms.Form{}, Venues: venues, Metadata: metadata})
 }
 
 func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 	venues := r.Context().Value(contextKeyVenues).([]*models.Venue)
-
+	metadata := r.Context().Value(contextKeyMetadata).(*models.Metadata)
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
@@ -72,7 +74,7 @@ func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 	form.MaxLength("name", 100)
 
 	if !form.Valid() {
-		app.render(w, r, "venue.list.page.html", &templateData{Form: form, Venues: venues})
+		app.render(w, r, "venue.list.page.html", &templateData{Form: form, Venues: venues, Metadata: metadata})
 		return
 	}
 
@@ -80,7 +82,7 @@ func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateName) {
 			form.Errors.Add("name", "Venue already exists")
-			app.render(w, r, "venue.list.page.html", &templateData{Form: form, Venues: venues})
+			app.render(w, r, "venue.list.page.html", &templateData{Form: form, Venues: venues, Metadata: metadata})
 		} else {
 			app.serverError(w, err)
 		}

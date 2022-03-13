@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/ollema/sersophane/pkg/models"
@@ -25,11 +26,11 @@ func (m *EventModel) Insert(name string, eventType models.EventType, startAt tim
 }
 
 func (m *EventModel) Get(id int) (*models.Event, error) {
-	e := &models.Event{}
-	query := `SELECT id, name, type, created_at, start_at, end_at, FROM events WHERE id = $1`
+	event := &models.Event{}
+	query := `SELECT id, name, type, created_at, start_at, end_at, cancelled FROM events WHERE id = $1`
 	args := []interface{}{id}
 
-	err := m.DB.QueryRow(query, args...).Scan(&e.ID, &e.Name, &e.Type, &e.StartAt, &e.EndAt)
+	err := m.DB.QueryRow(query, args...).Scan(&event.ID, &event.Name, &event.Type, &event.StartAt, &event.EndAt, &event.Cancelled)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord
@@ -38,5 +39,40 @@ func (m *EventModel) Get(id int) (*models.Event, error) {
 		}
 	}
 
-	return e, nil
+	return event, nil
+}
+
+func (m *EventModel) GetAll(filters *models.Filters) ([]*models.Event, *models.Metadata, error) {
+	events := []*models.Event{}
+	totalRecords := 0
+	query := fmt.Sprintf(
+		`SELECT count(*) OVER(), id, name, type, created_at, start_at, end_at, cancelled FROM events
+		ORDER BY %s %s LIMIT $1 OFFSET $2`,
+		filters.SortBy,
+		filters.SortDirection,
+	)
+	args := []interface{}{filters.Limit(), filters.Offset()}
+
+	rows, err := m.DB.Query(query, args...)
+	if err != nil {
+		return nil, &models.Metadata{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var event models.Event
+		err := rows.Scan(&totalRecords, &event.ID, &event.Name, &event.Type, &event.CreatedAt, &event.StartAt, &event.EndAt, &event.Cancelled)
+		if err != nil {
+			return nil, &models.Metadata{}, err
+		}
+		events = append(events, &event)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, &models.Metadata{}, err
+	}
+
+	metadata := models.CalculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return events, metadata, nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"html/template"
 	"io/fs"
+	"math"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -18,9 +19,11 @@ type templateData struct {
 	Artists         []*models.Artist
 	CSRFToken       string
 	Event           *models.Event
+	Events          []*models.Event
 	Flash           string
 	Form            *forms.Form
 	IsAuthenticated bool
+	Metadata        *models.Metadata
 	NavItems        []NavItem
 	ActiveNavItem   NavItem
 	User            *models.User
@@ -67,8 +70,41 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 }
 
 var functions = template.FuncMap{
-	"toLower": strings.ToLower,
-	"title":   strings.Title,
+	"toLower":              strings.ToLower,
+	"title":                strings.Title,
+	"metadataToPrevPage":   metadataToPrevPage,
+	"metadataToPages":      metadataToPages,
+	"metadataToNextPage":   metadataToNextPage,
+	"metadataToStartRange": metadataToStartRange,
+	"metadataToEndRange":   metadataToEndRange,
+}
+
+func metadataToPrevPage(metadata *models.Metadata) int {
+	return int(math.Max(float64(metadata.CurrentPage-1), float64(metadata.FirstPage)))
+}
+
+func metadataToPages(metadata *models.Metadata) []int {
+	start := int(math.Max(float64(metadata.CurrentPage-2), float64(metadata.FirstPage)))
+	end := int(math.Min(float64(metadata.CurrentPage+2), float64(metadata.LastPage)))
+
+	pages := make([]int, end-start+1)
+	for i := range pages {
+		pages[i] = start + i
+	}
+
+	return pages
+}
+
+func metadataToNextPage(metadata *models.Metadata) int {
+	return int(math.Min(float64(metadata.CurrentPage+1), float64(metadata.LastPage)))
+}
+
+func metadataToStartRange(metadata *models.Metadata) int {
+	return (metadata.CurrentPage-1)*metadata.PageSize + 1
+}
+
+func metadataToEndRange(metadata *models.Metadata) int {
+	return int(math.Min(float64(metadata.CurrentPage*metadata.PageSize), float64(metadata.TotalRecords)))
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
