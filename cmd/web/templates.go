@@ -84,8 +84,28 @@ func metadataToPrevPage(metadata *models.Metadata) int {
 }
 
 func metadataToPages(metadata *models.Metadata) []int {
-	start := int(math.Max(float64(metadata.CurrentPage-2), float64(metadata.FirstPage)))
-	end := int(math.Min(float64(metadata.CurrentPage+2), float64(metadata.LastPage)))
+	var maxEndDiff int
+	switch metadata.CurrentPage {
+	case 1:
+		maxEndDiff = 4
+	case 2:
+		maxEndDiff = 3
+	default:
+		maxEndDiff = 2
+	}
+
+	var maxStartDiff int
+	switch metadata.LastPage - metadata.CurrentPage {
+	case 0:
+		maxStartDiff = 4
+	case 1:
+		maxStartDiff = 3
+	default:
+		maxStartDiff = 2
+	}
+
+	start := int(math.Max(float64(metadata.CurrentPage-maxStartDiff), float64(metadata.FirstPage)))
+	end := int(math.Min(float64(metadata.CurrentPage+maxEndDiff), float64(metadata.LastPage)))
 
 	pages := make([]int, end-start+1)
 	for i := range pages {

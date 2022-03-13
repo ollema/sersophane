@@ -1,5 +1,7 @@
 BEGIN;
 
+CREATE COLLATION swedish (locale='sv_SE.utf8');
+
 CREATE TYPE event_type AS enum (
     'concert',
     'festival',
@@ -8,7 +10,7 @@ CREATE TYPE event_type AS enum (
 
 CREATE TABLE IF NOT EXISTS events (
     id bigserial PRIMARY KEY,
-    name text NOT NULL,
+    name text NOT NULL COLLATE swedish,
     type event_type NOT NULL,
     created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
     start_at timestamp(0) WITH time zone NOT NULL,
@@ -18,18 +20,18 @@ CREATE TABLE IF NOT EXISTS events (
 
 CREATE TABLE IF NOT EXISTS artists (
     id bigserial PRIMARY KEY,
-    name citext UNIQUE NOT NULL
+    name citext UNIQUE NOT NULL COLLATE swedish
 );
 
 CREATE TABLE IF NOT EXISTS venues (
     id bigserial PRIMARY KEY,
-    name citext UNIQUE NOT NULL,
-    city citext NOT NULL
+    name citext UNIQUE NOT NULL COLLATE swedish,
+    city citext NOT NULL COLLATE swedish
 );
 
 CREATE TABLE IF NOT EXISTS users (
     id bigserial PRIMARY KEY,
-    name citext UNIQUE NOT NULL,
+    name citext UNIQUE NOT NULL COLLATE swedish,
     created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
     email citext UNIQUE NOT NULL,
     password_hash bytea NOT NULL,
