@@ -25,7 +25,7 @@ func (m *VenueModel) Insert(name, city string) error {
 	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
 		switch {
-		case err.Error() == `pq: duplicate key value violates unique constraint "venues_name_key"`:
+		case err.Error() == `ERROR: duplicate key value violates unique constraint "venues_name_key" (SQLSTATE 23505)`:
 			return models.ErrDuplicateName
 		default:
 			return err

@@ -40,6 +40,9 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		if errors.Is(err, models.ErrDuplicateEmail) {
 			form.Errors.Add("email", "Address is already in use")
 			app.render(w, r, "user.signup.page.html", &templateData{Form: form})
+		} else if errors.Is(err, models.ErrDuplicateName) {
+			form.Errors.Add("name", "Name is already in use")
+			app.render(w, r, "user.signup.page.html", &templateData{Form: form})
 		} else {
 			app.serverError(w, err)
 		}
