@@ -9,23 +9,23 @@ import (
 	"github.com/ollema/sersophane/pkg/models"
 )
 
+type contextKey string
+
+const (
+	contextKeyArtist          contextKey = "artist"
+	contextKeyArtists         contextKey = "artists"
+	contextKeyEvent           contextKey = "event"
+	contextKeyEvents          contextKey = "events"
+	contextKeyIsAuthenticated contextKey = "isAuthenticated"
+	contextKeyMetadata        contextKey = "metadata"
+	contextKeyVenue           contextKey = "venue"
+	contextKeyVenues          contextKey = "venues"
+)
+
 func secureHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-XSS-Protection", "1; mode=block")
 		w.Header().Set("X-Frame-Options", "deny")
-
-		next.ServeHTTP(w, r)
-	})
-}
-
-func (app *application) requireAuthentication(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !app.isAuthenticated(r) {
-			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
-			return
-		}
-
-		w.Header().Add("Cache-Control", "no-store")
 
 		next.ServeHTTP(w, r)
 	})
@@ -40,6 +40,19 @@ func csrf(next http.Handler) http.Handler {
 	})
 
 	return csrfHandler
+}
+
+func (app *application) requireAuthentication(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !app.isAuthenticated(r) {
+			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+			return
+		}
+
+		w.Header().Add("Cache-Control", "no-store")
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (app *application) authenticate(next http.Handler) http.Handler {

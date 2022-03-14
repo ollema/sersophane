@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"flag"
 	"fmt"
 	"html/template"
@@ -12,18 +11,10 @@ import (
 	"time"
 
 	"github.com/golangcollege/sessions"
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/ollema/sersophane/pkg/models"
 	"github.com/ollema/sersophane/pkg/models/postgres"
 )
-
-type config struct {
-	db struct {
-		dsn string
-	}
-	port   int
-	secret string
-}
 
 type application struct {
 	artists interface {
@@ -51,34 +42,20 @@ type application struct {
 	}
 }
 
-type contextKey string
-
-const (
-	contextKeyArtist          contextKey = "artist"
-	contextKeyArtists         contextKey = "artists"
-	contextKeyEvent           contextKey = "event"
-	contextKeyEvents          contextKey = "events"
-	contextKeyIsAuthenticated contextKey = "isAuthenticated"
-	contextKeyMetadata        contextKey = "metadata"
-	contextKeyVenue           contextKey = "venue"
-	contextKeyVenues          contextKey = "venues"
-)
-
 func main() {
-	var cfg config
-	flag.IntVar(&cfg.port, "port", 4000, "port")
-	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("SERSOPHANE_DB_DSN"), "postgres dsn")
-	flag.StringVar(&cfg.secret, "secret", os.Getenv("SERSOPHANE_SECRET"), "secret (for encrypting session)")
+	var port int
+	var dsn string
+	var secret string
+	flag.IntVar(&port, "port", 4000, "port")
+	flag.StringVar(&dsn, "db-dsn", os.Getenv("SERSOPHANE_DB_DSN"), "postgres dsn")
+	flag.StringVar(&secret, "secret", os.Getenv("SERSOPHANE_SECRET"), "secret (for encrypting session)")
 	flag.Parse()
 
-	addr := fmt.Sprintf(":%d", cfg.port)
+	addr := fmt.Sprintf(":%d", port)
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	db, err := openDB(cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := openDB(dsn)
 	defer db.Close()
 
 	templateCache, err := newTemplateCache()
@@ -86,7 +63,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	session := sessions.New([]byte(cfg.secret))
+	session := sessions.New([]byte(secret))
 	session.Lifetime = 12 * time.Hour
 	// session.Secure = true  TODO: set true in prod
 
@@ -105,19 +82,15 @@ func main() {
 	log.Fatal(err)
 }
 
-func openDB(cfg config) (*sql.DB, error) {
-	db, err := sql.Open("postgres", cfg.db.dsn)
-	if err != nil {
-		return nil, err
-	}
-
+func openDB(dsn string) *pgxpool.Pool {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	err = db.PingContext(ctx)
+	db, err := pgxpool.Connect(ctx, dsn)
 	if err != nil {
-		return nil, err
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
 	}
 
-	return db, nil
+	return db
 }
