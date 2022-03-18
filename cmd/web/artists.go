@@ -42,7 +42,7 @@ func (app *application) artistsCtx(next http.Handler) http.Handler {
 			app.clientError(w, http.StatusNotFound)
 			return
 		}
-		artists, metadata, err := app.artists.GetAll(filters)
+		artists, metadata, err := app.artists.GetPage(filters)
 		if err != nil {
 			app.serverError(w, err)
 			return

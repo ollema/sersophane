@@ -16,11 +16,11 @@ type ArtistModel struct {
 }
 
 func (m *ArtistModel) Insert(name string) error {
-	query := `INSERT INTO artists (name) VALUES ($1)`
-	args := []interface{}{name}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+
+	query := `INSERT INTO artists (name) VALUES ($1)`
+	args := []interface{}{name}
 
 	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
@@ -36,12 +36,12 @@ func (m *ArtistModel) Insert(name string) error {
 }
 
 func (m *ArtistModel) Get(id int) (*models.Artist, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	artist := &models.Artist{}
 	query := `SELECT id, name FROM artists WHERE id = $1`
 	args := []interface{}{id}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	err := m.DB.QueryRow(ctx, query, args...).Scan(&artist.ID, &artist.Name)
 	if err != nil {
@@ -55,7 +55,10 @@ func (m *ArtistModel) Get(id int) (*models.Artist, error) {
 	return artist, nil
 }
 
-func (m *ArtistModel) GetAll(filters *models.Filters) ([]*models.Artist, *models.Metadata, error) {
+func (m *ArtistModel) GetPage(filters *models.Filters) ([]*models.Artist, *models.Metadata, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	artists := []*models.Artist{}
 	totalRecords := 0
 	query := fmt.Sprintf(
@@ -65,9 +68,6 @@ func (m *ArtistModel) GetAll(filters *models.Filters) ([]*models.Artist, *models
 		filters.SortDirection,
 	)
 	args := []interface{}{filters.Limit(), filters.Offset()}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
@@ -91,4 +91,39 @@ func (m *ArtistModel) GetAll(filters *models.Filters) ([]*models.Artist, *models
 	metadata := models.CalculateMetadata(totalRecords, filters.Page, filters.PageSize)
 
 	return artists, metadata, nil
+}
+
+func (m *ArtistModel) GetAll(filters *models.Filters) ([]*models.Artist, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	artists := []*models.Artist{}
+	query := fmt.Sprintf(
+		`SELECT id, name FROM artists
+		ORDER BY %s %s`,
+		filters.SortBy,
+		filters.SortDirection,
+	)
+	args := []interface{}{}
+
+	rows, err := m.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var artist models.Artist
+		err := rows.Scan(&artist.ID, &artist.Name)
+		if err != nil {
+			return nil, err
+		}
+		artists = append(artists, &artist)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return artists, nil
 }

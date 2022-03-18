@@ -45,7 +45,7 @@ func (app *application) venuesCtx(next http.Handler) http.Handler {
 			app.clientError(w, http.StatusNotFound)
 			return
 		}
-		venues, metadata, err := app.venues.GetAll(filters)
+		venues, metadata, err := app.venues.GetPage(filters)
 		if err != nil {
 			app.serverError(w, err)
 			return

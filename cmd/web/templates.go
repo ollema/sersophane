@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io/fs"
 	"math"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/justinas/nosurf"
 	"github.com/ollema/sersophane/pkg/forms"
@@ -70,6 +73,8 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 }
 
 var functions = template.FuncMap{
+	"shortDate":            shortDate,
+	"toInt":                toInt,
 	"toLower":              strings.ToLower,
 	"title":                strings.Title,
 	"metadataToPrevPage":   metadataToPrevPage,
@@ -77,6 +82,18 @@ var functions = template.FuncMap{
 	"metadataToNextPage":   metadataToNextPage,
 	"metadataToStartRange": metadataToStartRange,
 	"metadataToEndRange":   metadataToEndRange,
+}
+
+func shortDate(d time.Time) string {
+	return fmt.Sprintf("%d/%d", d.Day(), d.Month())
+}
+
+func toInt(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return -1
+	}
+	return i
 }
 
 func metadataToPrevPage(metadata *models.Metadata) int {

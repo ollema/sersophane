@@ -15,14 +15,43 @@ type EventModel struct {
 	DB *pgxpool.Pool
 }
 
-func (m *EventModel) Insert(name string, eventType models.EventType, startAt time.Time, endAt time.Time) error {
-	query := `INSERT INTO events (name, type, start_at, end_at) VALUES($1, $2, $3, $4, $5)`
-	args := []interface{}{name, eventType, startAt, endAt}
-
+func (m *EventModel) Insert(name string, eventType models.EventType, startAt time.Time, endAt time.Time, artistId, venueId int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.Exec(ctx, query, args...)
+	tx, err := m.DB.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback(ctx)
+
+	var eventId int
+	event_query := `INSERT INTO events (name, type, start_at, end_at, cancelled) VALUES ($1, $2, $3, $4, FALSE) RETURNING id`
+	event_args := []interface{}{name, eventType, startAt, endAt}
+
+	err = tx.QueryRow(ctx, event_query, event_args...).Scan(&eventId)
+	if err != nil {
+		return err
+	}
+
+	event_artist_query := `INSERT INTO event_artist (event_id, artist_id) VALUES ($1, $2)`
+	event_artist_args := []interface{}{eventId, artistId}
+
+	_, err = tx.Exec(ctx, event_artist_query, event_artist_args...)
+	if err != nil {
+		return err
+	}
+
+	event_venue_query := `INSERT INTO event_venue (event_id, venue_id) VALUES ($1, $2)`
+	event_venue_args := []interface{}{eventId, venueId}
+
+	_, err = tx.Exec(ctx, event_venue_query, event_venue_args...)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit(ctx)
 	if err != nil {
 		return err
 	}
@@ -31,12 +60,12 @@ func (m *EventModel) Insert(name string, eventType models.EventType, startAt tim
 }
 
 func (m *EventModel) Get(id int) (*models.Event, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	event := &models.Event{}
 	query := `SELECT id, name, type, created_at, start_at, end_at, cancelled FROM events WHERE id = $1`
 	args := []interface{}{id}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	err := m.DB.QueryRow(ctx, query, args...).Scan(&event.ID, &event.Name, &event.Type, &event.StartAt, &event.EndAt, &event.Cancelled)
 	if err != nil {
@@ -50,7 +79,10 @@ func (m *EventModel) Get(id int) (*models.Event, error) {
 	return event, nil
 }
 
-func (m *EventModel) GetAll(filters *models.Filters) ([]*models.Event, *models.Metadata, error) {
+func (m *EventModel) GetPage(filters *models.Filters) ([]*models.Event, *models.Metadata, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	events := []*models.Event{}
 	totalRecords := 0
 	query := fmt.Sprintf(
@@ -60,9 +92,6 @@ func (m *EventModel) GetAll(filters *models.Filters) ([]*models.Event, *models.M
 		filters.SortDirection,
 	)
 	args := []interface{}{filters.Limit(), filters.Offset()}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {

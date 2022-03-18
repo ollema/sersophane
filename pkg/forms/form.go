@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -71,6 +73,24 @@ func (f *Form) MatchesPattern(field string, pattern *regexp.Regexp) {
 	}
 	if !pattern.MatchString(value) {
 		f.Errors.Add(field, "This field is invalid")
+	}
+}
+
+func (f *Form) ValidDate(field string) {
+	_, err := time.Parse("2006-01-02", f.Get(field))
+	if err != nil {
+		f.Errors.Add(field, fmt.Sprintf("error: %s is not a valid date", field))
+	}
+}
+
+func (f *Form) ValidNumber(field string, min, max int) {
+	value := f.Get(field)
+	if value == "" {
+		return
+	}
+	n, err := strconv.Atoi(value)
+	if err != nil || n < min || n > max {
+		f.Errors.Add(field, fmt.Sprintf("This number must be between %d - %d", min, max))
 	}
 }
 

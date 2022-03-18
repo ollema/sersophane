@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"math"
 	"net/url"
 	"strconv"
@@ -29,7 +28,6 @@ func NewFilters(qs url.Values, sortableColumns map[string]struct{}, defaultSortB
 	if qs.Has("page") {
 		page, err = strconv.Atoi(qs.Get("page"))
 		if err != nil || page < PageLowerLimit || page > PageUpperLimit {
-			fmt.Println("hej")
 			return nil, ErrInvalidFilters
 		}
 	} else {

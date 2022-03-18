@@ -20,12 +20,13 @@ type application struct {
 	artists interface {
 		Insert(string) error
 		Get(int) (*models.Artist, error)
-		GetAll(filters *models.Filters) ([]*models.Artist, *models.Metadata, error)
+		GetPage(*models.Filters) ([]*models.Artist, *models.Metadata, error)
+		GetAll(*models.Filters) ([]*models.Artist, error)
 	}
 	events interface {
-		Insert(string, models.EventType, time.Time, time.Time) error
+		Insert(string, models.EventType, time.Time, time.Time, int, int) error
 		Get(int) (*models.Event, error)
-		GetAll(filters *models.Filters) ([]*models.Event, *models.Metadata, error)
+		GetPage(filters *models.Filters) ([]*models.Event, *models.Metadata, error)
 	}
 	logger        *log.Logger
 	session       *sessions.Session
@@ -38,7 +39,8 @@ type application struct {
 	venues interface {
 		Insert(string, string) error
 		Get(int) (*models.Venue, error)
-		GetAll(filters *models.Filters) ([]*models.Venue, *models.Metadata, error)
+		GetPage(*models.Filters) ([]*models.Venue, *models.Metadata, error)
+		GetAll(*models.Filters) ([]*models.Venue, error)
 	}
 }
 

@@ -16,11 +16,11 @@ type VenueModel struct {
 }
 
 func (m *VenueModel) Insert(name, city string) error {
-	query := `INSERT INTO venues (name, city) VALUES ($1, $2)`
-	args := []interface{}{name, city}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+
+	query := `INSERT INTO venues (name, city) VALUES ($1, $2)`
+	args := []interface{}{name, city}
 
 	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
@@ -36,12 +36,12 @@ func (m *VenueModel) Insert(name, city string) error {
 }
 
 func (m *VenueModel) Get(id int) (*models.Venue, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	venue := &models.Venue{}
 	query := `SELECT id, name, city FROM venues WHERE id = $1`
 	args := []interface{}{id}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	err := m.DB.QueryRow(ctx, query, args...).Scan(&venue.ID, &venue.Name, &venue.City)
 	if err != nil {
@@ -55,7 +55,10 @@ func (m *VenueModel) Get(id int) (*models.Venue, error) {
 	return venue, nil
 }
 
-func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, *models.Metadata, error) {
+func (m *VenueModel) GetPage(filters *models.Filters) ([]*models.Venue, *models.Metadata, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	venues := []*models.Venue{}
 	totalRecords := 0
 	query := fmt.Sprintf(
@@ -65,9 +68,6 @@ func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, *models.M
 		filters.SortDirection,
 	)
 	args := []interface{}{filters.Limit(), filters.Offset()}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
@@ -91,4 +91,39 @@ func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, *models.M
 	metadata := models.CalculateMetadata(totalRecords, filters.Page, filters.PageSize)
 
 	return venues, metadata, nil
+}
+
+func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	venues := []*models.Venue{}
+	query := fmt.Sprintf(
+		`SELECT id, name, city FROM venues
+		ORDER BY %s %s`,
+		filters.SortBy,
+		filters.SortDirection,
+	)
+	args := []interface{}{}
+
+	rows, err := m.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var venue models.Venue
+		err := rows.Scan(&venue.ID, &venue.Name, &venue.City)
+		if err != nil {
+			return nil, err
+		}
+		venues = append(venues, &venue)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return venues, nil
 }
