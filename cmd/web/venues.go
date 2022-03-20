@@ -36,11 +36,7 @@ func (app *application) venueCtx(next http.Handler) http.Handler {
 
 func (app *application) venuesCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sortableColumns := map[string]struct{}{
-			"name": {}, "-name": {},
-			"city": {}, "-city": {},
-		}
-		filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "name")
+		filters, err := models.NewFilters(r.URL.Query(), models.VenueSortableColumns, "venue_name")
 		if err != nil {
 			app.clientError(w, http.StatusNotFound)
 			return
@@ -99,13 +95,7 @@ func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) getVenue(w http.ResponseWriter, r *http.Request) {
 	venue := r.Context().Value(contextKeyVenue).(*models.Venue)
-	sortableColumns := map[string]struct{}{
-		"name":      {},
-		"-name":     {},
-		"start_at":  {},
-		"-start_at": {},
-	}
-	filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "start_at")
+	filters, err := models.NewFilters(r.URL.Query(), models.VenueSortableColumns, "event_start")
 	if err != nil {
 		app.clientError(w, http.StatusNotFound)
 		return

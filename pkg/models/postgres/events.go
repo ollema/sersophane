@@ -2,12 +2,12 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"time"
 
 	"github.com/jackc/pgtype"
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/ollema/sersophane/pkg/models"
 )
@@ -28,7 +28,7 @@ func (m *EventModel) Insert(name string, eventType models.EventType, startAt tim
 	defer tx.Rollback(ctx)
 
 	var eventId int
-	event_query := `INSERT INTO events (name, type, start_at, end_at, cancelled) VALUES ($1, $2, $3, $4, FALSE) RETURNING id`
+	event_query := `INSERT INTO events (event_name, event_type, event_start, event_end) VALUES ($1, $2, $3, $4) RETURNING event_id`
 	event_args := []interface{}{name, eventType, startAt, endAt}
 
 	err = tx.QueryRow(ctx, event_query, event_args...).Scan(&eventId)
@@ -65,12 +65,22 @@ func (m *EventModel) Get(id int) (*models.Event, error) {
 	defer cancel()
 
 	event := &models.Event{}
-	query := `SELECT id, name, type, created_at, start_at, end_at, cancelled FROM events WHERE id = $1`
+	query := `
+		SELECT
+			event_id,
+			event_name,
+			event_type,
+			event_created_at,
+			event_start,
+			event_end,
+			event_cancelled
+		FROM events
+		WHERE event_id = $1`
 	args := []interface{}{id}
 
-	err := m.DB.QueryRow(ctx, query, args...).Scan(&event.ID, &event.Name, &event.Type, &event.StartAt, &event.EndAt, &event.Cancelled)
+	err := m.DB.QueryRow(ctx, query, args...).Scan(&event.ID, &event.Name, &event.Type, &event.Start, &event.End, &event.Cancelled)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, models.ErrNoRecord
 		} else {
 			return nil, err
@@ -83,17 +93,35 @@ func (m *EventModel) Get(id int) (*models.Event, error) {
 func (m *EventModel) GetPage(filters *models.Filters) ([]*models.Event, *models.Metadata, error) {
 	query := fmt.Sprintf(
 		`SELECT
-		    count(*) OVER(), events.id, events.name, events.type, events.created_at, events.start_at, events.end_at, events.cancelled,
-		    ARRAY_AGG(artists.id) AS artist_ids, ARRAY_AGG(artists.name) AS artist_names,
-		    venues.id AS venue_id, venues.name AS venue_name
+		    count(*) OVER(),
+			events.event_id,
+			events.event_name,
+			events.event_type,
+			events.event_created_at,
+			events.event_start,
+			events.event_end,
+			events.event_cancelled,
+			ARRAY_AGG(artists.artist_id) AS artist_ids,
+			ARRAY_AGG(artists.artist_name) AS artist_names,
+			venues.venue_id,
+			venues.venue_name,
+			venues.venue_city
 		FROM events
-		INNER JOIN event_artist ON events.id = event_artist.event_id
-		INNER JOIN artists ON event_artist.artist_id = artists.id
-		INNER JOIN event_venue ON events.id = event_venue.event_id
-		INNER JOIN venues ON event_venue.venue_id = venues.id
+		INNER JOIN event_artist ON events.event_id = event_artist.event_id
+		INNER JOIN artists ON event_artist.artist_id = artists.artist_id
+		INNER JOIN event_venue ON events.event_id = event_venue.event_id
+		INNER JOIN venues ON event_venue.venue_id = venues.venue_id
 		GROUP BY
-			events.id, events.name, events.type, events.created_at, events.start_at, events.end_at, events.cancelled,
-			venues.id, venues.name
+			events.event_id,
+			events.event_name,
+			events.event_type,
+			events.event_created_at,
+			events.event_start,
+			events.event_end,
+			events.event_cancelled,
+			venues.venue_id,
+			venues.venue_name,
+			venues.venue_city
 		ORDER BY %s %s
 		LIMIT $1 OFFSET $2`,
 		filters.SortBy,
@@ -107,17 +135,35 @@ func (m *EventModel) GetPage(filters *models.Filters) ([]*models.Event, *models.
 func (m *EventModel) GetPageForArtist(artistId int, filters *models.Filters) ([]*models.Event, *models.Metadata, error) {
 	query := fmt.Sprintf(
 		`SELECT
-		    count(*) OVER(), events.id, events.name, events.type, events.created_at, events.start_at, events.end_at, events.cancelled,
-		    ARRAY_AGG(artists.id) AS artist_ids, ARRAY_AGG(artists.name) AS artist_names,
-		    venues.id AS venue_id, venues.name AS venue_name
+		    count(*) OVER(),
+			events.event_id,
+			events.event_name,
+			events.event_type,
+			events.event_created_at,
+			events.event_start,
+			events.event_end,
+			events.event_cancelled,
+			ARRAY_AGG(artists.artist_id) AS artist_ids,
+			ARRAY_AGG(artists.artist_name) AS artist_names,
+			venues.venue_id,
+			venues.venue_name,
+			venues.venue_city
 		FROM events
-		INNER JOIN event_artist ON events.id = event_artist.event_id
-		INNER JOIN artists ON event_artist.artist_id = artists.id
-		INNER JOIN event_venue ON events.id = event_venue.event_id
-		INNER JOIN venues ON event_venue.venue_id = venues.id
+		INNER JOIN event_artist ON events.event_id = event_artist.event_id
+		INNER JOIN artists ON event_artist.artist_id = artists.artist_id
+		INNER JOIN event_venue ON events.event_id = event_venue.event_id
+		INNER JOIN venues ON event_venue.venue_id = venues.venue_id
 		GROUP BY
-			events.id, events.name, events.type, events.created_at, events.start_at, events.end_at, events.cancelled,
-			venues.id, venues.name
+			events.event_id,
+			events.event_name,
+			events.event_type,
+			events.event_created_at,
+			events.event_start,
+			events.event_end,
+			events.event_cancelled,
+			venues.venue_id,
+			venues.venue_name,
+			venues.venue_city
 		HAVING $1 = ANY(ARRAY_AGG(artists.id))
 		ORDER BY %s %s
 		LIMIT $2 OFFSET $3`,
@@ -132,18 +178,36 @@ func (m *EventModel) GetPageForArtist(artistId int, filters *models.Filters) ([]
 func (m *EventModel) GetPageForVenue(venueId int, filters *models.Filters) ([]*models.Event, *models.Metadata, error) {
 	query := fmt.Sprintf(
 		`SELECT
-		    count(*) OVER(), events.id, events.name, events.type, events.created_at, events.start_at, events.end_at, events.cancelled,
-		    ARRAY_AGG(artists.id) AS artist_ids, ARRAY_AGG(artists.name) AS artist_names,
-		    venues.id AS venue_id, venues.name AS venue_name
+		    count(*) OVER(),
+			events.event_id,
+			events.event_name,
+			events.event_type,
+			events.event_created_at,
+			events.event_start,
+			events.event_end,
+			events.event_cancelled,
+			ARRAY_AGG(artists.artist_id) AS artist_ids,
+			ARRAY_AGG(artists.artist_name) AS artist_names,
+			venues.venue_id,
+			venues.venue_name,
+			venues.venue_city
 		FROM events
-		INNER JOIN event_artist ON events.id = event_artist.event_id
-		INNER JOIN artists ON event_artist.artist_id = artists.id
-		INNER JOIN event_venue ON events.id = event_venue.event_id
-		INNER JOIN venues ON event_venue.venue_id = venues.id
-		WHERE venues.id = $1
+		INNER JOIN event_artist ON events.event_id = event_artist.event_id
+		INNER JOIN artists ON event_artist.artist_id = artists.artist_id
+		INNER JOIN event_venue ON events.event_id = event_venue.event_id
+		INNER JOIN venues ON event_venue.venue_id = venues.venue_id
+		WHERE venues.venue_id = $1
 		GROUP BY
-			events.id, events.name, events.type, events.created_at, events.start_at, events.end_at, events.cancelled,
-			venues.id, venues.name
+			events.event_id,
+			events.event_name,
+			events.event_type,
+			events.event_created_at,
+			events.event_start,
+			events.event_end,
+			events.event_cancelled,
+			venues.venue_id,
+			venues.venue_name,
+			venues.venue_city
 		ORDER BY %s %s
 		LIMIT $2 OFFSET $3`,
 		filters.SortBy,
@@ -175,9 +239,9 @@ func (m *EventModel) getPage(query string, args []interface{}, page, pageSize in
 
 		err := rows.Scan(
 			&totalRecords,
-			&event.ID, &event.Name, &event.Type, &event.CreatedAt, &event.StartAt, &event.EndAt, &event.Cancelled,
+			&event.ID, &event.Name, &event.Type, &event.CreatedAt, &event.Start, &event.End, &event.Cancelled,
 			&artistIds, &artistNames,
-			&event.Venue.ID, &event.Venue.Name,
+			&event.Venue.ID, &event.Venue.Name, &event.Venue.City,
 		)
 		if err != nil {
 			return nil, &models.Metadata{}, err

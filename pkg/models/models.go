@@ -26,8 +26,8 @@ type Event struct {
 	Name      string
 	Type      EventType
 	CreatedAt time.Time
-	StartAt   time.Time
-	EndAt     time.Time
+	Start     time.Time
+	End       time.Time
 	Cancelled bool
 
 	// relationships
@@ -39,6 +39,8 @@ type Event struct {
 type Artist struct {
 	ID   int
 	Name string
+
+	EventRunningOrder int // Event <-> Artist junction table field
 }
 
 type Venue struct {
@@ -54,4 +56,6 @@ type User struct {
 	Email     string
 	Password  []byte
 	Activated bool
+
+	EventStatus int // Event <-> User junction table field
 }

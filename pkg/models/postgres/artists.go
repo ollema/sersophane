@@ -2,11 +2,11 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/ollema/sersophane/pkg/models"
 )
@@ -19,13 +19,13 @@ func (m *ArtistModel) Insert(name string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `INSERT INTO artists (name) VALUES ($1)`
+	query := `INSERT INTO artists (artist_name) VALUES ($1)`
 	args := []interface{}{name}
 
 	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
 		switch {
-		case err.Error() == `ERROR: duplicate key value violates unique constraint "artists_name_key" (SQLSTATE 23505)`:
+		case err.Error() == `ERROR: duplicate key value violates unique constraint "artists_artist_name_key" (SQLSTATE 23505)`:
 			return models.ErrDuplicateName
 		default:
 			return err
@@ -40,12 +40,12 @@ func (m *ArtistModel) Get(id int) (*models.Artist, error) {
 	defer cancel()
 
 	artist := &models.Artist{}
-	query := `SELECT id, name FROM artists WHERE id = $1`
+	query := `SELECT artist_id, artist_name FROM artists WHERE artist_id = $1`
 	args := []interface{}{id}
 
 	err := m.DB.QueryRow(ctx, query, args...).Scan(&artist.ID, &artist.Name)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, models.ErrNoRecord
 		} else {
 			return nil, err
@@ -62,7 +62,7 @@ func (m *ArtistModel) GetPage(filters *models.Filters) ([]*models.Artist, *model
 	artists := []*models.Artist{}
 	totalRecords := 0
 	query := fmt.Sprintf(
-		`SELECT count(*) OVER(), id, name FROM artists
+		`SELECT count(*) OVER(), artist_id, artist_name FROM artists
 		ORDER BY %s %s LIMIT $1 OFFSET $2`,
 		filters.SortBy,
 		filters.SortDirection,
@@ -99,7 +99,7 @@ func (m *ArtistModel) GetAll(filters *models.Filters) ([]*models.Artist, error) 
 
 	artists := []*models.Artist{}
 	query := fmt.Sprintf(
-		`SELECT id, name FROM artists
+		`SELECT artist_id, artist_name FROM artists
 		ORDER BY %s %s`,
 		filters.SortBy,
 		filters.SortDirection,

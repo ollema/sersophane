@@ -36,8 +36,7 @@ func (app *application) artistCtx(next http.Handler) http.Handler {
 
 func (app *application) artistsCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sortableColumns := map[string]struct{}{"name": {}}
-		filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "name")
+		filters, err := models.NewFilters(r.URL.Query(), models.ArtistSortableColumns, "artist_name")
 		if err != nil {
 			app.clientError(w, http.StatusNotFound)
 			return
@@ -95,13 +94,7 @@ func (app *application) createArtist(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) getArtist(w http.ResponseWriter, r *http.Request) {
 	artist := r.Context().Value(contextKeyArtist).(*models.Artist)
-	sortableColumns := map[string]struct{}{
-		"name":      {},
-		"-name":     {},
-		"start_at":  {},
-		"-start_at": {},
-	}
-	filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "start_at")
+	filters, err := models.NewFilters(r.URL.Query(), models.EventSortableColumns, "event_start")
 	if err != nil {
 		app.clientError(w, http.StatusNotFound)
 		return

@@ -22,6 +22,20 @@ type Filters struct {
 	SortDirection string
 }
 
+var (
+	ArtistSortableColumns = map[string]struct{}{
+		"artist_name": {}, "-artist_name": {},
+	}
+	EventSortableColumns = map[string]struct{}{
+		"event_name": {}, "-event_name": {},
+		"event_start": {}, "-event_start": {},
+	}
+	VenueSortableColumns = map[string]struct{}{
+		"venue_name": {}, "-venue_name": {},
+		"venue_city": {}, "-venue_city": {},
+	}
+)
+
 func NewFilters(qs url.Values, sortableColumns map[string]struct{}, defaultSortBy string) (*Filters, error) {
 	var page int
 	var err error

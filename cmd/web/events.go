@@ -38,13 +38,7 @@ func (app *application) eventCtx(next http.Handler) http.Handler {
 
 func (app *application) eventsCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sortableColumns := map[string]struct{}{
-			"name":      {},
-			"-name":     {},
-			"start_at":  {},
-			"-start_at": {},
-		}
-		filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "start_at")
+		filters, err := models.NewFilters(r.URL.Query(), models.EventSortableColumns, "event_start")
 		if err != nil {
 			app.clientError(w, http.StatusNotFound)
 			return
@@ -68,38 +62,49 @@ func (app *application) listEvents(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createEventForm(w http.ResponseWriter, r *http.Request) {
-	sortableColumns := map[string]struct{}{"name": {}}
-	filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "name")
+	artistFilters, err := models.NewFilters(r.URL.Query(), models.ArtistSortableColumns, "artist_name")
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	artists, err := app.artists.GetAll(filters)
+	artists, err := app.artists.GetAll(artistFilters)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	venues, err := app.venues.GetAll(filters)
+
+	venueFilters, err := models.NewFilters(r.URL.Query(), models.VenueSortableColumns, "venue_name")
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
+	venues, err := app.venues.GetAll(venueFilters)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	app.render(w, r, "event.create.page.html", &templateData{Form: forms.New(nil), Artists: artists, Venues: venues})
 }
 
 func (app *application) createEvent(w http.ResponseWriter, r *http.Request) {
-	sortableColumns := map[string]struct{}{"name": {}}
-	filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "name")
+	artistFilters, err := models.NewFilters(r.URL.Query(), models.ArtistSortableColumns, "artist_name")
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	artists, err := app.artists.GetAll(filters)
+	artists, err := app.artists.GetAll(artistFilters)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	venues, err := app.venues.GetAll(filters)
+
+	venueFilters, err := models.NewFilters(r.URL.Query(), models.VenueSortableColumns, "venue_name")
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	venues, err := app.venues.GetAll(venueFilters)
 	if err != nil {
 		app.serverError(w, err)
 		return

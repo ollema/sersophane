@@ -9,44 +9,45 @@ CREATE TYPE event_type AS enum (
 );
 
 CREATE TABLE IF NOT EXISTS events (
-    id bigserial PRIMARY KEY,
-    name text NOT NULL COLLATE swedish,
-    type event_type NOT NULL,
-    created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
-    start_at timestamp(0) WITH time zone NOT NULL,
-    end_at timestamp(0) WITH time zone NOT NULL,
-    cancelled bool NOT NULL DEFAULT FALSE
+    event_id bigserial PRIMARY KEY,
+    event_name text NOT NULL COLLATE swedish,
+    event_type event_type NOT NULL,
+    event_created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
+    event_start timestamp(0) WITH time zone NOT NULL,
+    event_end timestamp(0) WITH time zone NOT NULL,
+    event_cancelled bool NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS artists (
-    id bigserial PRIMARY KEY,
-    name citext UNIQUE NOT NULL COLLATE swedish
+    artist_id bigserial PRIMARY KEY,
+    artist_name citext UNIQUE NOT NULL COLLATE swedish
 );
 
 CREATE TABLE IF NOT EXISTS venues (
-    id bigserial PRIMARY KEY,
-    name citext UNIQUE NOT NULL COLLATE swedish,
-    city citext NOT NULL COLLATE swedish
+    venue_id bigserial PRIMARY KEY,
+    venue_name citext UNIQUE NOT NULL COLLATE swedish,
+    venue_city citext NOT NULL COLLATE swedish
 );
 
 CREATE TABLE IF NOT EXISTS users (
-    id bigserial PRIMARY KEY,
-    name citext UNIQUE NOT NULL COLLATE swedish,
-    created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
-    email citext UNIQUE NOT NULL,
-    password_hash bytea NOT NULL,
-    activated bool NOT NULL DEFAULT FALSE
+    user_id bigserial PRIMARY KEY,
+    user_name citext UNIQUE NOT NULL COLLATE swedish,
+    user_created_at timestamp(0) WITH time zone NOT NULL DEFAULT now(),
+    user_email citext UNIQUE NOT NULL,
+    user_password_hash bytea NOT NULL,
+    user_activated bool NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS event_artist (
-    event_id bigint NOT NULL REFERENCES events (id) ON DELETE CASCADE,
-    artist_id bigint NOT NULL REFERENCES artists (id) ON DELETE CASCADE,
+    event_id bigint NOT NULL REFERENCES events (event_id) ON DELETE CASCADE,
+    artist_id bigint NOT NULL REFERENCES artists (artist_id) ON DELETE CASCADE,
+    event_artist_running_order integer NOT NULL,
     CONSTRAINT event_artist_key PRIMARY KEY (event_id, artist_id)
 );
 
 CREATE TABLE IF NOT EXISTS event_venue (
-    event_id bigint NOT NULL REFERENCES events (id) ON DELETE CASCADE,
-    venue_id bigint NOT NULL REFERENCES venues (id) ON DELETE CASCADE,
+    event_id bigint NOT NULL REFERENCES events (event_id) ON DELETE CASCADE,
+    venue_id bigint NOT NULL REFERENCES venues (venue_id) ON DELETE CASCADE,
     CONSTRAINT event_venue_key PRIMARY KEY (event_id, venue_id)
 );
 
@@ -56,14 +57,14 @@ CREATE TYPE event_user_status AS enum (
 );
 
 CREATE TABLE IF NOT EXISTS event_user (
-    event_id bigint NOT NULL REFERENCES events (id) ON DELETE CASCADE,
-    user_id bigint NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    event_id bigint NOT NULL REFERENCES events (event_id) ON DELETE CASCADE,
+    user_id bigint NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     event_user_status event_user_status NOT NULL,
     CONSTRAINT event_user_key PRIMARY KEY (event_id, user_id)
 );
 
 -- Add common venues
-INSERT INTO venues (name, city)
+INSERT INTO venues (venue_name, venue_city)
 VALUES
     ('Bengans', 'Göteborg'),
     ('Bio Roy', 'Göteborg'),
@@ -81,7 +82,7 @@ VALUES
     ('Studio HKPSM', 'Göteborg'),
     ('The Abyss', 'Göteborg'),
     ('Trädgårn', 'Göteborg'),
-    ('Truckstop Alaska (RIP)', 'Göteborg'),
+    ('Truckstop Alaska', 'Göteborg'),
     ('Ullevi', 'Göteborg'),
     ('Valand', 'Göteborg'),
 
@@ -99,7 +100,7 @@ VALUES
     ('Plan B', 'Malmö');
 
 -- Add common artists
-INSERT INTO artists (name)
+INSERT INTO artists (artist_name)
 VALUES
     ('Bombus'),
     ('Graveyard'),

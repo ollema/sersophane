@@ -2,11 +2,11 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/ollema/sersophane/pkg/models"
 )
@@ -19,13 +19,13 @@ func (m *VenueModel) Insert(name, city string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `INSERT INTO venues (name, city) VALUES ($1, $2)`
+	query := `INSERT INTO venues (venue_name, venue_city) VALUES ($1, $2)`
 	args := []interface{}{name, city}
 
 	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
 		switch {
-		case err.Error() == `ERROR: duplicate key value violates unique constraint "venues_name_key" (SQLSTATE 23505)`:
+		case err.Error() == `ERROR: duplicate key value violates unique constraint "venues_venue_name_key" (SQLSTATE 23505)`:
 			return models.ErrDuplicateName
 		default:
 			return err
@@ -40,12 +40,12 @@ func (m *VenueModel) Get(id int) (*models.Venue, error) {
 	defer cancel()
 
 	venue := &models.Venue{}
-	query := `SELECT id, name, city FROM venues WHERE id = $1`
+	query := `SELECT venue_id, venue_name, venue_city FROM venues WHERE venue_id = $1`
 	args := []interface{}{id}
 
 	err := m.DB.QueryRow(ctx, query, args...).Scan(&venue.ID, &venue.Name, &venue.City)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, models.ErrNoRecord
 		} else {
 			return nil, err
@@ -62,7 +62,7 @@ func (m *VenueModel) GetPage(filters *models.Filters) ([]*models.Venue, *models.
 	venues := []*models.Venue{}
 	totalRecords := 0
 	query := fmt.Sprintf(
-		`SELECT count(*) OVER(), id, name, city FROM venues
+		`SELECT count(*) OVER(), venue_id, venue_name, venue_city FROM venues
 		ORDER BY %s %s LIMIT $1 OFFSET $2`,
 		filters.SortBy,
 		filters.SortDirection,
@@ -99,7 +99,7 @@ func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, error) {
 
 	venues := []*models.Venue{}
 	query := fmt.Sprintf(
-		`SELECT id, name, city FROM venues
+		`SELECT venue_id, venue_name, venue_city FROM venues
 		ORDER BY %s %s`,
 		filters.SortBy,
 		filters.SortDirection,
