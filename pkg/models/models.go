@@ -29,6 +29,11 @@ type Event struct {
 	StartAt   time.Time
 	EndAt     time.Time
 	Cancelled bool
+
+	// relationships
+	Artists []Artist // many-to-many
+	Users   []User   // many-to-many
+	Venue   Venue    // many-to-one
 }
 
 type Artist struct {

@@ -76,7 +76,7 @@ var functions = template.FuncMap{
 	"shortDate":            shortDate,
 	"toInt":                toInt,
 	"toLower":              strings.ToLower,
-	"title":                strings.Title,
+	"title":                title,
 	"metadataToPrevPage":   metadataToPrevPage,
 	"metadataToPages":      metadataToPages,
 	"metadataToNextPage":   metadataToNextPage,
@@ -94,6 +94,20 @@ func toInt(s string) int {
 		return -1
 	}
 	return i
+}
+
+func title(input string) string {
+	words := strings.Fields(input)
+	smallwords := " a an of on the to "
+
+	for index, word := range words {
+		if strings.Contains(smallwords, " "+word+" ") {
+			words[index] = word
+		} else {
+			words[index] = strings.Title(word)
+		}
+	}
+	return strings.Join(words, " ")
 }
 
 func metadataToPrevPage(metadata *models.Metadata) int {

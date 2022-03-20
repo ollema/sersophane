@@ -94,8 +94,24 @@ func (app *application) createArtist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getArtist(w http.ResponseWriter, r *http.Request) {
-	a := r.Context().Value(contextKeyArtist).(*models.Artist)
-	app.render(w, r, "artist.show.page.html", &templateData{Artist: a})
+	artist := r.Context().Value(contextKeyArtist).(*models.Artist)
+	sortableColumns := map[string]struct{}{
+		"name":      {},
+		"-name":     {},
+		"start_at":  {},
+		"-start_at": {},
+	}
+	filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "start_at")
+	if err != nil {
+		app.clientError(w, http.StatusNotFound)
+		return
+	}
+	events, metadata, err := app.events.GetPageForArtist(artist.ID, filters)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	app.render(w, r, "artist.show.page.html", &templateData{Artist: artist, Events: events, Metadata: metadata})
 }
 
 func (app *application) updateArtist(w http.ResponseWriter, r *http.Request) {

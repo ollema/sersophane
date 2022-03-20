@@ -38,8 +38,13 @@ func (app *application) eventCtx(next http.Handler) http.Handler {
 
 func (app *application) eventsCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sortableColumns := map[string]struct{}{"name": {}}
-		filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "name")
+		sortableColumns := map[string]struct{}{
+			"name":      {},
+			"-name":     {},
+			"start_at":  {},
+			"-start_at": {},
+		}
+		filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "start_at")
 		if err != nil {
 			app.clientError(w, http.StatusNotFound)
 			return

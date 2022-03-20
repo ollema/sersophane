@@ -98,8 +98,24 @@ func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getVenue(w http.ResponseWriter, r *http.Request) {
-	v := r.Context().Value(contextKeyVenue).(*models.Venue)
-	app.render(w, r, "venue.show.page.html", &templateData{Venue: v})
+	venue := r.Context().Value(contextKeyVenue).(*models.Venue)
+	sortableColumns := map[string]struct{}{
+		"name":      {},
+		"-name":     {},
+		"start_at":  {},
+		"-start_at": {},
+	}
+	filters, err := models.NewFilters(r.URL.Query(), sortableColumns, "start_at")
+	if err != nil {
+		app.clientError(w, http.StatusNotFound)
+		return
+	}
+	events, metadata, err := app.events.GetPageForVenue(venue.ID, filters)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	app.render(w, r, "venue.show.page.html", &templateData{Events: events, Metadata: metadata, Venue: venue})
 }
 
 func (app *application) updateVenue(w http.ResponseWriter, r *http.Request) {

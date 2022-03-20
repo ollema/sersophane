@@ -26,7 +26,9 @@ type application struct {
 	events interface {
 		Insert(string, models.EventType, time.Time, time.Time, int, int) error
 		Get(int) (*models.Event, error)
-		GetPage(filters *models.Filters) ([]*models.Event, *models.Metadata, error)
+		GetPage(*models.Filters) ([]*models.Event, *models.Metadata, error)
+		GetPageForArtist(int, *models.Filters) ([]*models.Event, *models.Metadata, error)
+		GetPageForVenue(int, *models.Filters) ([]*models.Event, *models.Metadata, error)
 	}
 	logger        *log.Logger
 	session       *sessions.Session
