@@ -62,23 +62,13 @@ func (app *application) listEvents(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createEventForm(w http.ResponseWriter, r *http.Request) {
-	artistFilters, err := models.NewFilters(r.URL.Query(), models.ArtistSortableColumns, "artist_name")
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	artists, err := app.artists.GetAll(artistFilters)
+	artists, err := app.artists.GetAll()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	venueFilters, err := models.NewFilters(r.URL.Query(), models.VenueSortableColumns, "venue_name")
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	venues, err := app.venues.GetAll(venueFilters)
+	venues, err := app.venues.GetAll()
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -88,23 +78,13 @@ func (app *application) createEventForm(w http.ResponseWriter, r *http.Request) 
 }
 
 func (app *application) createEvent(w http.ResponseWriter, r *http.Request) {
-	artistFilters, err := models.NewFilters(r.URL.Query(), models.ArtistSortableColumns, "artist_name")
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	artists, err := app.artists.GetAll(artistFilters)
+	artists, err := app.artists.GetAll()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	venueFilters, err := models.NewFilters(r.URL.Query(), models.VenueSortableColumns, "venue_name")
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	venues, err := app.venues.GetAll(venueFilters)
+	venues, err := app.venues.GetAll()
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -117,29 +97,51 @@ func (app *application) createEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := forms.New(r.PostForm)
-	form.Required("artist", "venue", "name", "type", "start-at", "duration")
+
+	// break out into form parse/valid func
+
+	var artistIds []int
+	var artistIdsStr []string
+	for _, artistIdStr := range form.Values["artist"] {
+		if artistIdStr != "" {
+			artistId, err := strconv.Atoi(artistIdStr)
+			if err != nil {
+				app.serverError(w, err)
+				return
+			}
+
+			// only add existing artists, else error out
+			artistExists := false
+			for _, artist := range artists {
+				if artistId == artist.ID {
+					artistExists = true
+				}
+			}
+			if !artistExists {
+				app.serverError(w, fmt.Errorf("artist with id=%d does not exist", artistId))
+				return
+			}
+
+			// don't add an artist twice, else skip
+			for _, existingArtistId := range artistIds {
+				if artistId == existingArtistId {
+					break
+				}
+			}
+
+			artistIds = append(artistIds, artistId)
+			artistIdsStr = append(artistIdsStr, artistIdStr)
+		}
+	}
+	form.Values["artist"] = artistIdsStr
+
+	form.Required("artist", "venue", "name", "type", "date", "duration")
 	form.MaxLength("name", 100)
-	form.ValidDate("start-at")
+	form.ValidDate("date")
 	form.ValidNumber("duration", 1, 14)
 
 	if !form.Valid() {
 		app.render(w, r, "event.create.page.html", &templateData{Form: form, Artists: artists, Venues: venues})
-		return
-	}
-
-	artistId, err := strconv.Atoi(form.Get("artist"))
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	artistExists := false
-	for _, artist := range artists {
-		if artistId == artist.ID {
-			artistExists = true
-		}
-	}
-	if !artistExists {
-		app.serverError(w, err)
 		return
 	}
 
@@ -172,12 +174,12 @@ func (app *application) createEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	startAt, err := time.Parse("2006-01-02", form.Get("start-at"))
+	start, err := time.Parse("2006-01-02", form.Get("date"))
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	startAt = startAt.Add(12 * time.Hour)
+	start = start.Add(12 * time.Hour)
 
 	duration, err := strconv.Atoi(form.Get("duration"))
 	if err != nil {
@@ -185,9 +187,9 @@ func (app *application) createEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	endAt := startAt.Add(time.Duration(duration*24) * time.Hour)
+	end := start.Add(time.Duration(duration*24) * time.Hour)
 
-	err = app.events.Insert(form.Get("name"), eventType, startAt, endAt, artistId, venueId)
+	err = app.events.Insert(form.Get("name"), eventType, start, end, artistIds, venueId)
 	if err != nil {
 		app.serverError(w, err)
 		return

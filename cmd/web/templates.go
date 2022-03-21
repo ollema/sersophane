@@ -73,6 +73,8 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 }
 
 var functions = template.FuncMap{
+	"getArtistIdFromForm":  getArtistIdFromForm,
+	"N":                    N,
 	"shortDate":            shortDate,
 	"toInt":                toInt,
 	"toLower":              strings.ToLower,
@@ -84,8 +86,30 @@ var functions = template.FuncMap{
 	"metadataToEndRange":   metadataToEndRange,
 }
 
+func N(start, end int) (stream chan int) {
+	stream = make(chan int)
+	go func() {
+		for i := start; i <= end; i++ {
+			stream <- i
+		}
+		close(stream)
+	}()
+	return
+}
+
+func getArtistIdFromForm(form forms.Form, index int) int {
+	if index < len(form.Values["artist"]) {
+		artistId, err := strconv.Atoi(form.Values["artist"][index])
+		if err != nil {
+			return -1
+		}
+		return artistId
+	}
+	return -1
+}
+
 func shortDate(d time.Time) string {
-	return fmt.Sprintf("%d/%d", d.Day(), d.Month())
+	return fmt.Sprintf("%d/%d %d", d.Day(), d.Month(), d.Year())
 }
 
 func toInt(s string) int {

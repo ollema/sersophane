@@ -28,7 +28,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{range $id, $event := .Events}}
+                                {{range $i, $event := .Events}}
                                     <tr class="border-b odd:bg-white even:bg-gray-50">
                                         <td class="pl-6 text-sm font-medium text-gray-900 whitespace-nowrap">
                                             <a href="/events/{{$event.ID}}" class="hover:underline py-2.5 h-full inline-block">{{$event.Name}}</a>
@@ -37,13 +37,13 @@
                                             {{$event.Type | printf "%s" | title}}
                                         </td>
                                         <td class="pl-6 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                            {{range $id, $artist := $event.Artists}}{{if $id}} + {{end}}{{$artist.Name}}{{end}}
+                                            {{range $i, $artist := $event.Artists}}{{if $i}} + {{end}}{{$artist.Name}}{{end}}
                                         </td>
                                         <td class="pl-6 text-sm font-medium text-gray-900 whitespace-nowrap">
                                             {{$event.Venue.Name}}
                                         </td>
                                         <td class="pl-6 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                            {{$event.StartAt | shortDate}}
+                                            {{$event.Start | shortDate}}
                                         </td>
                                         <td class="px-6 whitespace-nowrap max-w-md">
                                             <div class="flex items-center justify-end gap-0">

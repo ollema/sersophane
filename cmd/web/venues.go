@@ -95,7 +95,7 @@ func (app *application) createVenue(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) getVenue(w http.ResponseWriter, r *http.Request) {
 	venue := r.Context().Value(contextKeyVenue).(*models.Venue)
-	filters, err := models.NewFilters(r.URL.Query(), models.VenueSortableColumns, "event_start")
+	filters, err := models.NewFilters(r.URL.Query(), models.EventSortableColumns, "event_start")
 	if err != nil {
 		app.clientError(w, http.StatusNotFound)
 		return

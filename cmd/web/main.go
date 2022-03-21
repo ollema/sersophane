@@ -21,10 +21,10 @@ type application struct {
 		Insert(string) error
 		Get(int) (*models.Artist, error)
 		GetPage(*models.Filters) ([]*models.Artist, *models.Metadata, error)
-		GetAll(*models.Filters) ([]*models.Artist, error)
+		GetAll() ([]*models.Artist, error)
 	}
 	events interface {
-		Insert(string, models.EventType, time.Time, time.Time, int, int) error
+		Insert(string, models.EventType, time.Time, time.Time, []int, int) error
 		Get(int) (*models.Event, error)
 		GetPage(*models.Filters) ([]*models.Event, *models.Metadata, error)
 		GetPageForArtist(int, *models.Filters) ([]*models.Event, *models.Metadata, error)
@@ -42,7 +42,7 @@ type application struct {
 		Insert(string, string) error
 		Get(int) (*models.Venue, error)
 		GetPage(*models.Filters) ([]*models.Venue, *models.Metadata, error)
-		GetAll(*models.Filters) ([]*models.Venue, error)
+		GetAll() ([]*models.Venue, error)
 	}
 }
 

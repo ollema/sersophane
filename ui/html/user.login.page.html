@@ -23,14 +23,14 @@
                             {{with .Errors.Get "email"}}
                                 {{template "error" .}}
                             {{end}}
-                            <input id="email" name="email" type="email" autocomplete="email" class="input-primary" value='{{.Get "email"}}'>
+                            <input name="email" type="email" autocomplete="email" class="input-primary" value='{{.Get "email"}}'>
                         </div>
                         <div>
                             <label for="password" class="label-primary mt-4">Password</label>
                             {{with .Errors.Get "password"}}
                                 {{template "error" .}}
                             {{end}}
-                            <input id="password" name="password" type="password" class="input-primary">
+                            <input name="password" type="password" class="input-primary">
                         </div>
                     </div>
 

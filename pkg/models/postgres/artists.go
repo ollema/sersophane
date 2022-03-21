@@ -93,17 +93,12 @@ func (m *ArtistModel) GetPage(filters *models.Filters) ([]*models.Artist, *model
 	return artists, metadata, nil
 }
 
-func (m *ArtistModel) GetAll(filters *models.Filters) ([]*models.Artist, error) {
+func (m *ArtistModel) GetAll() ([]*models.Artist, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	artists := []*models.Artist{}
-	query := fmt.Sprintf(
-		`SELECT artist_id, artist_name FROM artists
-		ORDER BY %s %s`,
-		filters.SortBy,
-		filters.SortDirection,
-	)
+	query := `SELECT artist_id, artist_name FROM artists ORDER BY artist_name ASC`
 	args := []interface{}{}
 
 	rows, err := m.DB.Query(ctx, query, args...)

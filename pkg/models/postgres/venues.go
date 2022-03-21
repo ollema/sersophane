@@ -93,17 +93,13 @@ func (m *VenueModel) GetPage(filters *models.Filters) ([]*models.Venue, *models.
 	return venues, metadata, nil
 }
 
-func (m *VenueModel) GetAll(filters *models.Filters) ([]*models.Venue, error) {
+func (m *VenueModel) GetAll() ([]*models.Venue, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	venues := []*models.Venue{}
-	query := fmt.Sprintf(
-		`SELECT venue_id, venue_name, venue_city FROM venues
-		ORDER BY %s %s`,
-		filters.SortBy,
-		filters.SortDirection,
-	)
+	query := `SELECT venue_id, venue_name, venue_city FROM venues ORDER BY venue_name ASC`
+
 	args := []interface{}{}
 
 	rows, err := m.DB.Query(ctx, query, args...)

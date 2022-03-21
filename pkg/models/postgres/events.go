@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/jackc/pgtype"
@@ -16,8 +17,8 @@ type EventModel struct {
 	DB *pgxpool.Pool
 }
 
-func (m *EventModel) Insert(name string, eventType models.EventType, startAt time.Time, endAt time.Time, artistId, venueId int) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+func (m *EventModel) Insert(name string, eventType models.EventType, start time.Time, end time.Time, artistIds []int, venueId int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	tx, err := m.DB.Begin(ctx)
@@ -29,19 +30,21 @@ func (m *EventModel) Insert(name string, eventType models.EventType, startAt tim
 
 	var eventId int
 	event_query := `INSERT INTO events (event_name, event_type, event_start, event_end) VALUES ($1, $2, $3, $4) RETURNING event_id`
-	event_args := []interface{}{name, eventType, startAt, endAt}
+	event_args := []interface{}{name, eventType, start, end}
 
 	err = tx.QueryRow(ctx, event_query, event_args...).Scan(&eventId)
 	if err != nil {
 		return err
 	}
 
-	event_artist_query := `INSERT INTO event_artist (event_id, artist_id) VALUES ($1, $2)`
-	event_artist_args := []interface{}{eventId, artistId}
+	for runningOrder, artistId := range artistIds {
+		event_artist_query := `INSERT INTO event_artist (event_id, artist_id, event_artist_running_order) VALUES ($1, $2, $3)`
+		event_artist_args := []interface{}{eventId, artistId, runningOrder}
 
-	_, err = tx.Exec(ctx, event_artist_query, event_artist_args...)
-	if err != nil {
-		return err
+		_, err = tx.Exec(ctx, event_artist_query, event_artist_args...)
+		if err != nil {
+			return err
+		}
 	}
 
 	event_venue_query := `INSERT INTO event_venue (event_id, venue_id) VALUES ($1, $2)`
@@ -103,6 +106,7 @@ func (m *EventModel) GetPage(filters *models.Filters) ([]*models.Event, *models.
 			events.event_cancelled,
 			ARRAY_AGG(artists.artist_id) AS artist_ids,
 			ARRAY_AGG(artists.artist_name) AS artist_names,
+			ARRAY_AGG(event_artist.event_artist_running_order) as running_order,
 			venues.venue_id,
 			venues.venue_name,
 			venues.venue_city
@@ -145,6 +149,7 @@ func (m *EventModel) GetPageForArtist(artistId int, filters *models.Filters) ([]
 			events.event_cancelled,
 			ARRAY_AGG(artists.artist_id) AS artist_ids,
 			ARRAY_AGG(artists.artist_name) AS artist_names,
+			ARRAY_AGG(event_artist.event_artist_running_order) as running_order,
 			venues.venue_id,
 			venues.venue_name,
 			venues.venue_city
@@ -164,7 +169,7 @@ func (m *EventModel) GetPageForArtist(artistId int, filters *models.Filters) ([]
 			venues.venue_id,
 			venues.venue_name,
 			venues.venue_city
-		HAVING $1 = ANY(ARRAY_AGG(artists.id))
+		HAVING $1 = ANY(ARRAY_AGG(artists.artist_id))
 		ORDER BY %s %s
 		LIMIT $2 OFFSET $3`,
 		filters.SortBy,
@@ -188,6 +193,7 @@ func (m *EventModel) GetPageForVenue(venueId int, filters *models.Filters) ([]*m
 			events.event_cancelled,
 			ARRAY_AGG(artists.artist_id) AS artist_ids,
 			ARRAY_AGG(artists.artist_name) AS artist_names,
+			ARRAY_AGG(event_artist.event_artist_running_order) as running_order,
 			venues.venue_id,
 			venues.venue_name,
 			venues.venue_city
@@ -235,12 +241,13 @@ func (m *EventModel) getPage(query string, args []interface{}, page, pageSize in
 		var event models.Event
 		var artistIds []int
 		var artistNames pgtype.TextArray
+		var runningOrder []int
 		var artists []models.Artist
 
 		err := rows.Scan(
 			&totalRecords,
 			&event.ID, &event.Name, &event.Type, &event.CreatedAt, &event.Start, &event.End, &event.Cancelled,
-			&artistIds, &artistNames,
+			&artistIds, &artistNames, &runningOrder,
 			&event.Venue.ID, &event.Venue.Name, &event.Venue.City,
 		)
 		if err != nil {
@@ -248,10 +255,13 @@ func (m *EventModel) getPage(query string, args []interface{}, page, pageSize in
 		}
 
 		for i := range artistIds {
-			artists = append(artists, models.Artist{ID: artistIds[i], Name: artistNames.Elements[i].String})
+			artists = append(artists, models.Artist{
+				ID:                artistIds[i],
+				Name:              artistNames.Elements[i].String,
+				EventRunningOrder: runningOrder[i],
+			})
 		}
-		// sort according to junction table insertion order, might be hard. probably need another column
-		// sort.Slice(artists, func(i, j int) bool { return ... < ... })
+		sort.Slice(artists, func(i, j int) bool { return artists[i].EventRunningOrder < artists[j].EventRunningOrder })
 		event.Artists = artists
 
 		events = append(events, &event)

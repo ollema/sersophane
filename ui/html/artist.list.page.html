@@ -18,7 +18,7 @@
                                 {{template "error" .}}
                             {{end}}
                             <div class="relative">
-                                <input type="text" name="name" id="name" autocomplete="artist-name" class="input-primary">
+                                <input type="text" name="name" autocomplete="artist-name" class="input-primary">
                                 <button type="submit" class="btn-submit-inline">OK</button>
                             </div>
                         {{end}}
@@ -45,7 +45,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{range $id, $artist := .Artists}}
+                                {{range $i, $artist := .Artists}}
                                     <tr class="border-b odd:bg-white even:bg-gray-50">
                                         <td class="px-6 text-sm font-medium text-gray-900 whitespace-nowrap w-full">
                                             <a href="/artists/{{$artist.ID}}" class="hover:underline py-2.5 w-full h-full inline-block">{{$artist.Name | title}}</a>
