@@ -1,2 +1,0 @@
-# sersophane
-Live show planner
