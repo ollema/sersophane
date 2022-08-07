@@ -25,10 +25,10 @@ export const GET: RequestHandler = async ({ url }) => {
 	if (perPageParam !== null) {
 		perPage = parseInt(perPageParam);
 		if (isNaN(perPage)) {
-			perPage = undefined;
+			perPage = 20;
 		}
 	} else {
-		perPage = undefined;
+		perPage = 20;
 	}
 
 	const sortParam = urlParams.get('sort');
@@ -60,7 +60,11 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	return {
 		body: {
-			venues: venues
+			venues: venues,
+			currentPage: result.page,
+			perPage: result.perPage,
+			totalItems: result.totalItems,
+			sort: queryParams.sort
 		}
 	};
 };

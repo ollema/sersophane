@@ -17,7 +17,7 @@
 
 <style>
 	nav {
-		margin: 0.5rem 0 2rem 0;
+		margin: 0.5rem 0 1.5rem 0;
 
 		color: var(--text);
 		font-weight: 600;

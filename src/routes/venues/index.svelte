@@ -4,7 +4,13 @@
 
 	import type { Venue } from '$lib/types';
 
+	import Pagination from '$lib/components/Pagination.svelte';
+
 	export let venues: Venue[];
+	export let currentPage: number;
+	export let perPage: number;
+	export let totalItems: number;
+	export let sort: string;
 
 	async function toggleSort(sortBy: string) {
 		const url = new URL($page.url);
@@ -19,13 +25,15 @@
 		await goto(url.href);
 	}
 
-	$: activeSortParam = $page.url.searchParams.get('sort');
-
 	let nameFilter = $page.url.searchParams.get('name');
 
 	async function handleSubmit() {
 		const url = new URL($page.url);
-		url.searchParams.set('name', `${nameFilter}`);
+		if (nameFilter === '') {
+			url.searchParams.delete('name');
+		} else {
+			url.searchParams.set('name', `${nameFilter}`);
+		}
 		await goto(url.href);
 	}
 </script>
@@ -37,15 +45,15 @@
 <table>
 	<tr>
 		<th
-			class:sortAsc={activeSortParam === 'name'}
-			class:sortDesc={activeSortParam === '-name'}
+			class:sortAsc={sort === 'name'}
+			class:sortDesc={sort === '-name'}
 			on:click={async () => {
 				toggleSort('name');
 			}}>Name</th
 		>
 		<th
-			class:sortAsc={activeSortParam === 'city'}
-			class:sortDesc={activeSortParam === '-city'}
+			class:sortAsc={sort === 'city'}
+			class:sortDesc={sort === '-city'}
 			on:click={async () => {
 				toggleSort('city');
 			}}>City</th
@@ -61,7 +69,26 @@
 	{/each}
 </table>
 
+<Pagination {currentPage} {perPage} {totalItems} />
+
 <style>
+	input {
+		padding: 0.5rem;
+		margin-bottom: 1rem;
+
+		background-color: var(--background-secondary);
+	}
+
+	table {
+		margin-bottom: 0.5rem;
+	}
+
+	th {
+		padding: 0.5rem;
+
+		background-color: var(--background-secondary);
+	}
+
 	th:hover {
 		text-decoration: underline;
 	}
@@ -84,5 +111,13 @@
 		content: '\a0\a0▲';
 		top: -0.4em;
 		text-decoration: none;
+	}
+
+	td {
+		padding: 0.5rem;
+	}
+
+	tr:hover {
+		background-color: var(--background-tertiary);
 	}
 </style>
