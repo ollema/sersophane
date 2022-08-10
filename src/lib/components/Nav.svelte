@@ -5,19 +5,19 @@
 <nav>
 	<div>
 		<div class="left-nav">
+			<a sveltekit:prefetch href="/" class:selected={section === ''}>sersophane</a>
 			<a sveltekit:prefetch href="/events" class:selected={section === 'events'}>events</a>
-			<a sveltekit:prefetch href="/artists" class:selected={section === 'artists'}>artists</a>
-			<a sveltekit:prefetch href="/venues" class:selected={section === 'venues'}>venues</a>
-			<a sveltekit:prefetch href="/users" class:selected={section === 'users'}>users</a>
+			<a sveltekit:prefetch href="/about" class:selected={section === 'about'}>about</a>
 		</div>
 
-		<a sveltekit:prefetch href="/about" class:selected={section === 'about'}>about</a>
+		<a sveltekit:prefetch href="/" class:selected={section === 'profile'}>user: ...</a>
 	</div>
 </nav>
 
 <style>
 	nav {
-		margin: 0.5rem 0 1.5rem 0;
+		margin-top: 0.5rem;
+		margin-bottom: 1rem;
 
 		color: var(--text);
 		font-weight: 600;

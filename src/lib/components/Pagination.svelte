@@ -6,15 +6,14 @@
 	export let perPage: number;
 	export let totalItems: number;
 
-	$: lastPage = Math.ceil(totalItems / perPage);
-
-	const numberOfButtons = 7;
+	$: lastPage = Math.max(1, Math.ceil(totalItems / perPage));
 
 	const getRange = (start: number, end: number) => {
 		return [...Array(end - start + 1).keys()].map((i) => i + start);
 	};
 
 	function getDelta(currentPage: number, lastPage: number) {
+		const numberOfButtons = 7;
 		let delta: number;
 		if (lastPage <= numberOfButtons) {
 			delta = numberOfButtons;
@@ -26,6 +25,9 @@
 	}
 
 	function pagination(currentPage: number, lastPage: number) {
+		if (lastPage === 1) {
+			return [1];
+		}
 		const delta = getDelta(currentPage, lastPage);
 
 		const range = {
@@ -63,7 +65,7 @@
 		return pages;
 	}
 
-	$: buttons = pagination(currentPage, lastPage);
+	$: pages = pagination(currentPage, lastPage);
 
 	async function gotoPage(selectedPage: number) {
 		const url = new URL($page.url);
@@ -84,18 +86,18 @@
 		</svg>
 	</button>
 
-	{#each buttons as button}
+	{#each pages as _page}
 		<button
 			type="button"
-			class:currentPage={currentPage === button}
+			class:currentPage={currentPage === _page}
 			on:click={async () => {
-				if (button !== -1) {
-					gotoPage(button);
+				if (_page !== -1) {
+					gotoPage(_page);
 				}
 			}}
 		>
-			{#if button !== -1}
-				{button}
+			{#if _page !== -1}
+				{_page}
 			{:else}
 				...
 			{/if}
@@ -121,6 +123,8 @@
 		justify-content: center;
 
 		gap: 0.5rem;
+
+		margin: 0.5rem;
 	}
 
 	.pagination button {
