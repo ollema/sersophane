@@ -3,7 +3,6 @@ import type { RequestHandler } from '@sveltejs/kit';
 import PocketBase from 'pocketbase';
 
 import type { Event } from '$lib/types';
-import { formatToLocalDate, getDateTime } from '$lib/utils';
 
 const client = new PocketBase('http://127.0.0.1:8090');
 
@@ -62,7 +61,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				url: record['@expand'].venue.url,
 				slug: record['@expand'].venue.slug
 			},
-			artists: record['@expand'].artists.map((artist: any) => {
+			artists: record['@expand'].artists.map((artist: Record<string, string | null>) => {
 				return {
 					id: artist.id,
 					name: artist.name,

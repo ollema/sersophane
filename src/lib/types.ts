@@ -1,5 +1,3 @@
-import type { DateTime } from 'luxon';
-
 export type City = {
 	id: string;
 	name: string;

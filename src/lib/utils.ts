@@ -11,10 +11,10 @@ export function getDateTime(date: string | Date) {
 	return DateTime.fromJSDate(date);
 }
 
-export function formatToUTCDate(date: string | Date, format: string = 'yyyy-MM-dd HH:mm:ss') {
+export function formatToUTCDate(date: string | Date, format = 'yyyy-MM-dd HH:mm:ss') {
 	return getDateTime(date).toUTC().toFormat(format);
 }
 
-export function formatToLocalDate(date: string | Date, format: string = 'yyyy-MM-dd HH:mm:ss') {
+export function formatToLocalDate(date: string | Date, format = 'yyyy-MM-dd HH:mm:ss') {
 	return getDateTime(date).toLocal().toFormat(format);
 }
