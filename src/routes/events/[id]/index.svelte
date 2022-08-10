@@ -57,12 +57,12 @@
 			<td>{event.cancelled}</td>
 		</tr>
 		<tr>
-			<td>startsAt</td>
-			<td>{event.startsAt}</td>
+			<td>starts</td>
+			<td>{event.starts}</td>
 		</tr>
 		<tr>
-			<td>endsAt</td>
-			<td>{event.endsAt}</td>
+			<td>ends</td>
+			<td>{event.ends}</td>
 		</tr>
 		{#each event.responses as response, i}
 			<tr>

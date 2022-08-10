@@ -62,8 +62,8 @@ export type Event = {
 	artists: Artist[];
 	type: EventType;
 	cancelled: boolean;
-	startsAt: string;
-	endsAt: string;
+	starts: string;
+	ends: string;
 	responses: EventResponse[];
 	url?: string;
 

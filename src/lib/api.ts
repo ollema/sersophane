@@ -1,5 +1,3 @@
-import type { RequestHandler } from '@sveltejs/kit';
-
 import PocketBase, { Record as PocketBaseRecord } from 'pocketbase';
 
 import type { Event } from '$lib/types';
@@ -76,8 +74,8 @@ function parseEventRecord(record: PocketBaseRecord) {
 		}),
 		type: record.type,
 		cancelled: record.cancelled,
-		startsAt: record.startsAt,
-		endsAt: record.endsAt,
+		starts: record.starts,
+		ends: record.ends,
 		responses: (record['@expand'].responses || []).map((resp: PocketBaseRecord) => {
 			return {
 				id: resp.id,

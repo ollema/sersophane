@@ -54,8 +54,13 @@
 					toggleSort('name');
 				}}>what</th
 			>
-			<th>when</th>
-
+			<th
+				class:sortAsc={sort === 'starts'}
+				class:sortDesc={sort === '-starts'}
+				on:click={async () => {
+					toggleSort('starts');
+				}}>when</th
+			>
 			<th
 				class:sortAsc={sort === 'venue'}
 				class:sortDesc={sort === '-venue'}
@@ -68,7 +73,7 @@
 		{#each events as event}
 			<tr>
 				<td><a href="/events/{event.id}">{event.name}</a></td>
-				<td>{formatToLocalDate(event.startsAt, 'd/M yyyy')}</td>
+				<td>{formatToLocalDate(event.starts, 'd/M yyyy')}</td>
 				<td>{event.venue.name}</td>
 				<td />
 			</tr>
