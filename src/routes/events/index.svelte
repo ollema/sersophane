@@ -42,42 +42,35 @@
 
 <main>
 	<form on:submit|preventDefault={handleNameFilterSubmit}>
-		<input bind:value={nameFilter} placeholder="filter by name..." />
+		<input bind:value={nameFilter} placeholder="filter by event name..." />
 	</form>
 
 	<table>
 		<tr>
-			<th>Date</th>
 			<th
 				class:sortAsc={sort === 'name'}
 				class:sortDesc={sort === '-name'}
 				on:click={async () => {
 					toggleSort('name');
-				}}>Name</th
+				}}>what</th
 			>
+			<th>when</th>
+
 			<th
 				class:sortAsc={sort === 'venue'}
 				class:sortDesc={sort === '-venue'}
 				on:click={async () => {
 					toggleSort('venue');
-				}}>Venue</th
+				}}>where</th
 			>
-			<th>Artists</th>
-			<th>Type</th>
-			<th>Link</th>
+			<th>who</th>
 		</tr>
 		{#each events as event}
 			<tr>
+				<td><a href="/events/{event.id}">{event.name}</a></td>
 				<td>{formatToLocalDate(event.startsAt, 'd/M yyyy')}</td>
-				<td>{event.name}</td>
 				<td>{event.venue.name}</td>
-				<td>
-					{#each event.artists as artist, i}
-						{artist.name}{#if i < event.artists.length - 2},&nbsp;{/if}{#if i === event.artists.length - 2}&nbsp;&&nbsp;{/if}
-					{/each}
-				</td>
-				<td>{event.type}</td>
-				<td>{event.url}</td>
+				<td />
 			</tr>
 		{/each}
 	</table>
@@ -127,6 +120,10 @@
 
 	td {
 		padding: 0.5rem;
+	}
+
+	td a:hover {
+		text-decoration: underline;
 	}
 
 	tr:hover {

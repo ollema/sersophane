@@ -8,7 +8,6 @@ process.emit = function (name, data) {
 
 // start of actual script
 import PocketBase from 'pocketbase';
-import slugify from 'slugify';
 
 const pocketBaseUrl = 'http://127.0.0.1:8090';
 
@@ -29,17 +28,15 @@ const cities = [{ name: 'Göteborg' }, { name: 'Malmö' }, { name: 'Stockholm' }
 
 const createCities = async () => {
 	for (let city of cities) {
-		const slug = slugify(city.name, { lower: true });
-		city.slug = slug;
-
 		const record = await client.records.getList('cities', 1, 50, {
-			filter: `slug = "${slug}"`
+			filter: `name = "${city.name}"`
 		});
 
 		if (record.totalItems === 1) {
 			await client.records.update('cities', record.items[0].id, city);
 			continue;
 		}
+
 		if (record.totalItems === 0) {
 			await client.records.create('cities', city);
 			continue;
@@ -89,28 +86,24 @@ const venues = [
 
 const createVenues = async () => {
 	for (let venue of venues) {
-		const slug = slugify(venue.name, { lower: true });
-		venue.slug = slug;
-
-		const citySlug = slugify(venue.city, { lower: true });
 		const cityRecord = await client.records.getList('cities', 1, 50, {
-			filter: `slug = "${citySlug}"`
+			filter: `name = "${venue.city}"`
 		});
 		if (cityRecord.totalItems !== 1) {
 			throw Error(`unknown city ${venue.city}`);
 		}
 		const cityId = cityRecord.items[0].id;
-
 		venue.city = cityId;
 
 		const record = await client.records.getList('venues', 1, 50, {
-			filter: `slug = "${slug}"`
+			filter: `name = "${venue.name}"`
 		});
 
 		if (record.totalItems === 1) {
 			await client.records.update('venues', record.items[0].id, venue);
 			continue;
 		}
+
 		if (record.totalItems === 0) {
 			await client.records.create('venues', venue);
 			continue;
@@ -139,17 +132,15 @@ const artists = [
 
 const createArtists = async () => {
 	for (let artist of artists) {
-		const slug = slugify(artist.name, { lower: true });
-		artist.slug = slug;
-
 		const record = await client.records.getList('artists', 1, 50, {
-			filter: `slug = "${slug}"`
+			filter: `name = "${artist.name}"`
 		});
 
 		if (record.totalItems === 1) {
 			await client.records.update('artists', record.items[0].id, artist);
 			continue;
 		}
+
 		if (record.totalItems === 0) {
 			await client.records.create('artists', artist);
 			continue;

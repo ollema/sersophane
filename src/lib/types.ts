@@ -1,7 +1,9 @@
 export type City = {
 	id: string;
 	name: string;
-	slug: string;
+
+	created: string;
+	updated: string;
 };
 
 export type Venue = {
@@ -9,14 +11,42 @@ export type Venue = {
 	name: string;
 	city: City;
 	url?: string;
-	slug: string;
+
+	created: string;
+	updated: string;
 };
 
 export type Artist = {
 	id: string;
 	name: string;
 	url?: string;
-	slug: string;
+
+	created: string;
+	updated: string;
+};
+
+export type Profile = {
+	id: string;
+	name: string;
+	avatar: string;
+
+	created: string;
+	updated: string;
+};
+
+export enum Response {
+	Interested = 'interested',
+	Going = 'going',
+	NotGoing = 'not-going'
+}
+
+export type EventResponse = {
+	id: string;
+	response: Response;
+	profile: Profile;
+
+	created: string;
+	updated: string;
 };
 
 export enum EventType {
@@ -30,9 +60,13 @@ export type Event = {
 	name: string;
 	venue: Venue;
 	artists: Artist[];
+	type: EventType;
+	cancelled: boolean;
 	startsAt: string;
 	endsAt: string;
-	type: EventType;
+	responses: EventResponse[];
 	url?: string;
-	slug: string;
+
+	created: string;
+	updated: string;
 };
