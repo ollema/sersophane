@@ -61,7 +61,7 @@ export type Event = {
 	venue: Venue;
 	artists: Artist[];
 	type: EventType;
-	cancelled: boolean;
+	cancelled?: boolean;
 	starts: string;
 	ends: string;
 	responses: EventResponse[];
@@ -69,4 +69,19 @@ export type Event = {
 
 	created: string;
 	updated: string;
+};
+
+// types for POST endpoints
+export type CityPost = Omit<City, 'id' | 'created' | 'updated'>;
+
+export type VenuePost = Omit<Venue, 'id' | 'created' | 'updated' | 'city'> & { cityId: string };
+
+export type ArtistPost = Omit<Artist, 'id' | 'created' | 'updated'>;
+
+export type ResponsePost = Omit<EventResponse, 'id' | 'created' | 'updated' | 'profile'> & { profileId: string };
+
+export type EventPost = Omit<Event, 'id' | 'created' | 'updated' | 'venue' | 'artists' | 'responses'> & {
+	venueId: string;
+	artistIds: string[];
+	responseIds: string[];
 };

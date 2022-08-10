@@ -81,15 +81,10 @@ function parseEventRecord(record: PocketBaseRecord) {
 				id: resp.id,
 				response: resp.response,
 				profile: {
-					// @ts-ignore
 					id: resp['@expand'].profile.id,
-					// @ts-ignore
 					name: resp['@expand'].profile.name,
-					// @ts-ignore
 					avatar: resp['@expand'].profile.avatar,
-					// @ts-ignore
 					created: resp['@expand'].profile.created,
-					// @ts-ignore
 					updated: resp['@expand'].profile.updated
 				},
 				created: resp.created,
