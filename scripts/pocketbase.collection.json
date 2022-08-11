@@ -1,337 +1,323 @@
 [
-  {
-    "id": "NIfdT47yWYsj772",
-    "name": "profiles",
-    "system": true,
-    "listRule": "",
-    "viewRule": "",
-    "createRule": "userId = @request.user.id",
-    "updateRule": "userId = @request.user.id",
-    "deleteRule": null,
-    "schema": [
-      {
-        "id": "voefcrly",
-        "name": "userId",
-        "type": "user",
-        "system": true,
-        "required": true,
-        "unique": true,
-        "options": {
-          "maxSelect": 1,
-          "cascadeDelete": true
-        }
-      },
-      {
-        "id": "xdyq82fx",
-        "name": "name",
-        "type": "text",
-        "system": false,
-        "required": true,
-        "unique": true,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "id": "pbhyu6p8",
-        "name": "avatar",
-        "type": "file",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "maxSize": 5242880,
-          "mimeTypes": [
-            "image/jpg",
-            "image/jpeg",
-            "image/png",
-            "image/svg+xml",
-            "image/gif"
-          ],
-          "thumbs": null
-        }
-      }
-    ]
-  },
-  {
-    "id": "N4zluAcoAY9p96X",
-    "name": "artists",
-    "system": false,
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "schema": [
-      {
-        "id": "fqe17e2d",
-        "name": "name",
-        "type": "text",
-        "system": false,
-        "required": true,
-        "unique": true,
-        "options": {
-          "min": 2,
-          "max": 50,
-          "pattern": ""
-        }
-      },
-      {
-        "id": "qadhc00g",
-        "name": "url",
-        "type": "url",
-        "system": false,
-        "required": false,
-        "unique": false,
-        "options": {
-          "exceptDomains": null,
-          "onlyDomains": null
-        }
-      }
-    ]
-  },
-  {
-    "id": "Alk2TN3wCIx0GCG",
-    "name": "cities",
-    "system": false,
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "schema": [
-      {
-        "id": "40iyyjno",
-        "name": "name",
-        "type": "text",
-        "system": false,
-        "required": true,
-        "unique": true,
-        "options": {
-          "min": 2,
-          "max": 50,
-          "pattern": ""
-        }
-      }
-    ]
-  },
-  {
-    "id": "vfFMEDP3ScHSOPj",
-    "name": "venues",
-    "system": false,
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "schema": [
-      {
-        "id": "2adpz0tk",
-        "name": "name",
-        "type": "text",
-        "system": false,
-        "required": true,
-        "unique": true,
-        "options": {
-          "min": 2,
-          "max": 50,
-          "pattern": ""
-        }
-      },
-      {
-        "id": "nilelncj",
-        "name": "city",
-        "type": "relation",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "collectionId": "Alk2TN3wCIx0GCG",
-          "cascadeDelete": true
-        }
-      },
-      {
-        "id": "0v5fo7ns",
-        "name": "url",
-        "type": "url",
-        "system": false,
-        "required": false,
-        "unique": false,
-        "options": {
-          "exceptDomains": null,
-          "onlyDomains": null
-        }
-      }
-    ]
-  },
-  {
-    "id": "fIRwnwj1ZpF11zz",
-    "name": "event_responses",
-    "system": false,
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "schema": [
-      {
-        "id": "cxgdtwmg",
-        "name": "response",
-        "type": "select",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "interested",
-            "going",
-            "not-going"
-          ]
-        }
-      },
-      {
-        "id": "abcdefghi",
-        "name": "event",
-        "type": "relation",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "collectionId": "VExCIBGNDC0QqfV",
-          "cascadeDelete": false
-        }
-      },
-      {
-        "id": "np6vxirr",
-        "name": "profile",
-        "type": "relation",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "collectionId": "NIfdT47yWYsj772",
-          "cascadeDelete": false
-        }
-      }
-    ]
-  },
-  {
-    "id": "VExCIBGNDC0QqfV",
-    "name": "events",
-    "system": false,
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "schema": [
-      {
-        "id": "cbxdxnpj",
-        "name": "name",
-        "type": "text",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "min": 2,
-          "max": 50,
-          "pattern": ""
-        }
-      },
-      {
-        "id": "oryhsg8w",
-        "name": "venue",
-        "type": "relation",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "collectionId": "vfFMEDP3ScHSOPj",
-          "cascadeDelete": false
-        }
-      },
-      {
-        "id": "tq1izqj3",
-        "name": "artists",
-        "type": "relation",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "maxSelect": 10,
-          "collectionId": "N4zluAcoAY9p96X",
-          "cascadeDelete": false
-        }
-      },
-      {
-        "id": "ksgafkzw",
-        "name": "type",
-        "type": "select",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "concert",
-            "festival",
-            "film"
-          ]
-        }
-      },
-      {
-        "id": "n1kxskcj",
-        "name": "cancelled",
-        "type": "bool",
-        "system": false,
-        "required": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "id": "v54zhaet",
-        "name": "starts",
-        "type": "date",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "min": "",
-          "max": ""
-        }
-      },
-      {
-        "id": "vxlmzjam",
-        "name": "ends",
-        "type": "date",
-        "system": false,
-        "required": true,
-        "unique": false,
-        "options": {
-          "min": "",
-          "max": ""
-        }
-      },
-      {
-        "id": "yn8zbd8g",
-        "name": "url",
-        "type": "url",
-        "system": false,
-        "required": false,
-        "unique": false,
-        "options": {
-          "exceptDomains": null,
-          "onlyDomains": null
-        }
-      }
-    ]
-  }
+	{
+		"id": "NIfdT47yWYsj772",
+		"name": "profiles",
+		"system": true,
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "userId = @request.user.id",
+		"updateRule": "userId = @request.user.id",
+		"deleteRule": null,
+		"schema": [
+			{
+				"id": "voefcrly",
+				"name": "userId",
+				"type": "user",
+				"system": true,
+				"required": true,
+				"unique": true,
+				"options": {
+					"maxSelect": 1,
+					"cascadeDelete": true
+				}
+			},
+			{
+				"id": "xdyq82fx",
+				"name": "name",
+				"type": "text",
+				"system": false,
+				"required": true,
+				"unique": true,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"id": "pbhyu6p8",
+				"name": "avatar",
+				"type": "file",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"maxSize": 5242880,
+					"mimeTypes": ["image/jpg", "image/jpeg", "image/png", "image/svg+xml", "image/gif"],
+					"thumbs": null
+				}
+			}
+		]
+	},
+	{
+		"id": "N4zluAcoAY9p96X",
+		"name": "artists",
+		"system": false,
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"schema": [
+			{
+				"id": "fqe17e2d",
+				"name": "name",
+				"type": "text",
+				"system": false,
+				"required": true,
+				"unique": true,
+				"options": {
+					"min": 2,
+					"max": 50,
+					"pattern": ""
+				}
+			},
+			{
+				"id": "qadhc00g",
+				"name": "url",
+				"type": "url",
+				"system": false,
+				"required": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			}
+		]
+	},
+	{
+		"id": "Alk2TN3wCIx0GCG",
+		"name": "cities",
+		"system": false,
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"schema": [
+			{
+				"id": "40iyyjno",
+				"name": "name",
+				"type": "text",
+				"system": false,
+				"required": true,
+				"unique": true,
+				"options": {
+					"min": 2,
+					"max": 50,
+					"pattern": ""
+				}
+			}
+		]
+	},
+	{
+		"id": "vfFMEDP3ScHSOPj",
+		"name": "venues",
+		"system": false,
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"schema": [
+			{
+				"id": "2adpz0tk",
+				"name": "name",
+				"type": "text",
+				"system": false,
+				"required": true,
+				"unique": true,
+				"options": {
+					"min": 2,
+					"max": 50,
+					"pattern": ""
+				}
+			},
+			{
+				"id": "nilelncj",
+				"name": "city",
+				"type": "relation",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"collectionId": "Alk2TN3wCIx0GCG",
+					"cascadeDelete": true
+				}
+			},
+			{
+				"id": "0v5fo7ns",
+				"name": "url",
+				"type": "url",
+				"system": false,
+				"required": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			}
+		]
+	},
+	{
+		"id": "fIRwnwj1ZpF11zz",
+		"name": "event_responses",
+		"system": false,
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"schema": [
+			{
+				"id": "cxgdtwmg",
+				"name": "response",
+				"type": "select",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": ["interested", "going", "not-going"]
+				}
+			},
+			{
+				"id": "abcdefghi",
+				"name": "event",
+				"type": "relation",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"collectionId": "VExCIBGNDC0QqfV",
+					"cascadeDelete": false
+				}
+			},
+			{
+				"id": "np6vxirr",
+				"name": "profile",
+				"type": "relation",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"collectionId": "NIfdT47yWYsj772",
+					"cascadeDelete": false
+				}
+			}
+		]
+	},
+	{
+		"id": "VExCIBGNDC0QqfV",
+		"name": "events",
+		"system": false,
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"schema": [
+			{
+				"id": "cbxdxnpj",
+				"name": "name",
+				"type": "text",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"min": 2,
+					"max": 50,
+					"pattern": ""
+				}
+			},
+			{
+				"id": "oryhsg8w",
+				"name": "venue",
+				"type": "relation",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"collectionId": "vfFMEDP3ScHSOPj",
+					"cascadeDelete": false
+				}
+			},
+			{
+				"id": "tq1izqj3",
+				"name": "artists",
+				"type": "relation",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"maxSelect": 10,
+					"collectionId": "N4zluAcoAY9p96X",
+					"cascadeDelete": false
+				}
+			},
+			{
+				"id": "ksgafkzw",
+				"name": "type",
+				"type": "select",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": ["concert", "festival", "film"]
+				}
+			},
+			{
+				"id": "n1kxskcj",
+				"name": "cancelled",
+				"type": "bool",
+				"system": false,
+				"required": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"id": "v54zhaet",
+				"name": "starts",
+				"type": "date",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"min": "",
+					"max": ""
+				}
+			},
+			{
+				"id": "vxlmzjam",
+				"name": "ends",
+				"type": "date",
+				"system": false,
+				"required": true,
+				"unique": false,
+				"options": {
+					"min": "",
+					"max": ""
+				}
+			},
+			{
+				"id": "yn8zbd8g",
+				"name": "url",
+				"type": "url",
+				"system": false,
+				"required": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			}
+		]
+	}
 ]

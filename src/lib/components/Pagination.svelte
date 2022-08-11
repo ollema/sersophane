@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	export let currentPage: number = 1;
+	export let currentPage = 1;
 	export let perPage: number;
 	export let totalItems: number;
 
