@@ -43,6 +43,7 @@ export enum Response {
 export type EventResponse = {
 	id: string;
 	response: Response;
+	event: Partial<Event>;
 	profile: Profile;
 
 	created: string;
@@ -64,7 +65,6 @@ export type Event = {
 	cancelled?: boolean;
 	starts: string;
 	ends: string;
-	responses: EventResponse[];
 	url?: string;
 
 	created: string;
@@ -78,10 +78,12 @@ export type VenuePost = Omit<Venue, 'id' | 'created' | 'updated' | 'city'> & { c
 
 export type ArtistPost = Omit<Artist, 'id' | 'created' | 'updated'>;
 
-export type ResponsePost = Omit<EventResponse, 'id' | 'created' | 'updated' | 'profile'> & { profileId: string };
+export type ResponsePost = Omit<EventResponse, 'id' | 'created' | 'updated' | 'event' | 'profile'> & {
+	eventId: string;
+	profileId: string;
+};
 
 export type EventPost = Omit<Event, 'id' | 'created' | 'updated' | 'venue' | 'artists' | 'responses'> & {
 	venueId: string;
 	artistIds: string[];
-	responseIds: string[];
 };

@@ -1,6 +1,6 @@
 import PocketBase, { Record as PocketBaseRecord } from 'pocketbase';
 
-import type { Event } from '$lib/types';
+import type { Event, EventResponse } from '$lib/types';
 
 const client = new PocketBase('http://127.0.0.1:8090');
 
@@ -46,7 +46,7 @@ function parseQueryParams(urlParams: URLSearchParams) {
 	return { page: page, perPage: perPage, queryParams: queryParams };
 }
 
-function parseEventRecord(record: PocketBaseRecord) {
+function processEventRecord(record: PocketBaseRecord) {
 	return {
 		id: record.id,
 		name: record.name,
@@ -76,25 +76,45 @@ function parseEventRecord(record: PocketBaseRecord) {
 		cancelled: record.cancelled,
 		starts: record.starts,
 		ends: record.ends,
-		responses: (record['@expand'].responses || []).map((resp: PocketBaseRecord) => {
-			return {
-				id: resp.id,
-				response: resp.response,
-				profile: {
-					id: resp['@expand'].profile.id,
-					name: resp['@expand'].profile.name,
-					avatar: resp['@expand'].profile.avatar,
-					created: resp['@expand'].profile.created,
-					updated: resp['@expand'].profile.updated
-				},
-				created: resp.created,
-				updated: resp.updated
-			};
-		}),
 		url: record.url,
 		created: record.created,
 		updated: record.updated
 	};
+}
+
+function processResponseRecord(record: PocketBaseRecord) {
+	return {
+		id: record.id,
+		response: record.response,
+		event: {
+			id: record['@expand'].event.id
+		},
+		profile: {
+			id: record['@expand'].profile.id,
+			name: record['@expand'].profile.name,
+			// avatar: `http://127.0.0.1:8090/api/files/profiles/${record.id}/${record['@expand'].profile.avatar}`,
+			avatar: client.records.getFileUrl(record['@expand'].profile, record['@expand'].profile.avatar, { thumb: '100x100' }),
+			created: record['@expand'].profile.created,
+			updated: record['@expand'].profile.updated
+		},
+		created: record.created,
+		updated: record.updated
+	};
+}
+
+async function getResponsesFromEvents(events: Event[]) {
+	const eventResponses: { [eventId: string]: EventResponse[] } = {};
+
+	for (const event of events) {
+		const result = await client.records.getFullList('event_responses', 100, {
+			filter: `event.id = "${event.id}"`,
+			expand: 'event, profile'
+		});
+		const responses: EventResponse[] = result.map(processResponseRecord);
+		eventResponses[event.id] = responses;
+	}
+
+	return eventResponses;
 }
 
 export async function getEvents(url: URL) {
@@ -102,15 +122,16 @@ export async function getEvents(url: URL) {
 	queryParams.expand = defaultQueryParams.expand;
 
 	const result = await client.records.getList('events', page, perPage, queryParams);
-	const events: Event[] = result.items.map(parseEventRecord);
+	const events: Event[] = result.items.map(processEventRecord);
+	const responses = await getResponsesFromEvents(events);
 
-	return { events: events, page: page, perPage: perPage, totalItems: result.totalItems, sort: queryParams.sort };
+	return { events: events, responses: responses, page: page, perPage: perPage, totalItems: result.totalItems, sort: queryParams.sort };
 }
 
 export async function getEvent(id: string) {
 	const result = await client.records.getOne('events', id, defaultQueryParams);
 
-	const event: Event = parseEventRecord(result);
+	const event: Event = processEventRecord(result);
 
 	return event;
 }

@@ -2,13 +2,14 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import type { Event } from '$lib/types';
+	import type { Event, EventResponse } from '$lib/types';
 	import { formatToLocalDate } from '$lib/utils';
 
 	import Pagination from '$lib/components/Pagination.svelte';
 
 	export let events: Event[];
-	export let currentPage: number;
+	export let responses: { [eventId: string]: EventResponse[] };
+	export let currentPage: number | undefined = undefined;
 	export let perPage: number;
 	export let totalItems: number;
 	export let sort: string | null;
@@ -50,6 +51,7 @@
 			<th
 				class:sortAsc={sort === 'name'}
 				class:sortDesc={sort === '-name'}
+				class="sortable"
 				on:click={async () => {
 					toggleSort('name');
 				}}>what</th
@@ -57,6 +59,7 @@
 			<th
 				class:sortAsc={sort === 'starts'}
 				class:sortDesc={sort === '-starts'}
+				class="sortable"
 				on:click={async () => {
 					toggleSort('starts');
 				}}>when</th
@@ -64,6 +67,7 @@
 			<th
 				class:sortAsc={sort === 'venue'}
 				class:sortDesc={sort === '-venue'}
+				class="sortable"
 				on:click={async () => {
 					toggleSort('venue');
 				}}>where</th
@@ -75,7 +79,13 @@
 				<td><a href="/events/{event.id}">{event.name}</a></td>
 				<td>{formatToLocalDate(event.starts, 'd/M yyyy')}</td>
 				<td>{event.venue.name}</td>
-				<td />
+				<td class="avatars">
+					{#if responses !== undefined && responses[event.id] !== undefined}
+						{#each responses[event.id] as response}
+							<img src={response.profile.avatar} alt="avatar for {response.profile.name}" />
+						{/each}
+					{/if}
+				</td>
 			</tr>
 		{/each}
 	</table>
@@ -99,9 +109,10 @@
 		background-color: var(--background-secondary);
 	}
 
-	th:hover {
+	th.sortable:hover {
 		text-decoration: underline;
 	}
+
 	th::after {
 		display: inline-block;
 		font-size: xx-small;
@@ -133,5 +144,18 @@
 
 	tr:hover {
 		background-color: var(--background-tertiary);
+	}
+
+	.avatars {
+		position: relative;
+
+		padding: 0rem;
+	}
+
+	img {
+		position: absolute;
+		object-fit: cover;
+		height: 2rem;
+		width: 2rem;
 	}
 </style>
