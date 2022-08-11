@@ -8,7 +8,7 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 
 	export let events: Event[];
-	export let responses: { [eventId: string]: EventResponse[] };
+	export let eventResponseMap: { [eventId: string]: EventResponse[] };
 	export let currentPage: number | undefined = undefined;
 	export let perPage: number;
 	export let totalItems: number;
@@ -80,8 +80,8 @@
 				<td>{formatToLocalDate(event.starts, 'd/M yyyy')}</td>
 				<td>{event.venue.name}</td>
 				<td class="avatars">
-					{#if responses !== undefined && responses[event.id] !== undefined}
-						{#each responses[event.id] as response}
+					{#if eventResponseMap[event.id] !== undefined}
+						{#each eventResponseMap[event.id] as response}
 							<img src={response.profile.avatar} alt="avatar for {response.profile.name}" />
 						{/each}
 					{/if}

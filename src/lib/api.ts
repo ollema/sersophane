@@ -102,19 +102,26 @@ function processResponseRecord(record: PocketBaseRecord) {
 	};
 }
 
-async function getResponsesFromEvents(events: Event[]) {
-	const eventResponses: { [eventId: string]: EventResponse[] } = {};
+async function getEventResponseMap(events: Event[]) {
+	const eventResponseMap: { [eventId: string]: EventResponse[] } = {};
 
-	for (const event of events) {
-		const result = await client.records.getFullList('event_responses', 100, {
-			filter: `event.id = "${event.id}"`,
-			expand: 'event, profile'
-		});
-		const responses: EventResponse[] = result.map(processResponseRecord);
-		eventResponses[event.id] = responses;
+	const filter = events
+		.map((event) => {
+			return `event.id = "${event.id}"`;
+		})
+		.join(' || ');
+
+	const result = await client.records.getFullList('event_responses', 100, { filter: filter, expand: 'event, profile' });
+	const eventResponses: EventResponse[] = result.map(processResponseRecord);
+
+	for (const eventResponse of eventResponses) {
+		if (!eventResponseMap[eventResponse.event.id]) {
+			eventResponseMap[eventResponse.event.id] = [];
+		}
+		eventResponseMap[eventResponse.event.id].push(eventResponse);
 	}
 
-	return eventResponses;
+	return eventResponseMap;
 }
 
 export async function getEvents(url: URL) {
@@ -123,15 +130,24 @@ export async function getEvents(url: URL) {
 
 	const result = await client.records.getList('events', page, perPage, queryParams);
 	const events: Event[] = result.items.map(processEventRecord);
-	const responses = await getResponsesFromEvents(events);
+	const eventResponseMap = await getEventResponseMap(events);
 
-	return { events: events, responses: responses, page: page, perPage: perPage, totalItems: result.totalItems, sort: queryParams.sort };
+	return {
+		events: events,
+		eventResponseMap: eventResponseMap,
+		page: page,
+		perPage: perPage,
+		totalItems: result.totalItems,
+		sort: queryParams.sort
+	};
 }
 
 export async function getEvent(id: string) {
 	const result = await client.records.getOne('events', id, defaultQueryParams);
 
 	const event: Event = processEventRecord(result);
+	const eventResponseMap = await getEventResponseMap([event]);
+	const eventResponses = eventResponseMap[event.id] || [];
 
-	return event;
+	return { event, eventResponses };
 }

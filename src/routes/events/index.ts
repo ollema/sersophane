@@ -3,12 +3,12 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { getEvents } from '$lib/api';
 
 export const GET: RequestHandler = async ({ url }) => {
-	const { events, responses, page, perPage, totalItems, sort } = await getEvents(url);
+	const { events, eventResponseMap, page, perPage, totalItems, sort } = await getEvents(url);
 
 	return {
 		body: {
 			events: events,
-			responses: responses,
+			eventResponseMap: eventResponseMap,
 			currentPage: page,
 			perPage: perPage,
 			totalItems: totalItems,

@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { Event } from '$lib/types';
+	import type { Event, EventResponse } from '$lib/types';
 
 	export let event: Event;
+	export let eventResponses: EventResponse[];
 </script>
 
 <main>
@@ -64,7 +65,7 @@
 			<td>ends</td>
 			<td>{event.ends}</td>
 		</tr>
-		{#each event.responses as response, i}
+		{#each eventResponses as response, i}
 			<tr>
 				<td>response {i + 1} - id</td>
 				<td>{response.id}</td>

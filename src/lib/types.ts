@@ -43,7 +43,7 @@ export enum Response {
 export type EventResponse = {
 	id: string;
 	response: Response;
-	event: Partial<Event>;
+	event: Pick<Event, 'id'>;
 	profile: Profile;
 
 	created: string;
