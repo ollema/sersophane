@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Filters from './_Filters.svelte';
+
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
@@ -36,55 +38,42 @@
 	async function toggleSortByVenue() {
 		toggleSort('venue');
 	}
-
-	let nameFilter = $page.url.searchParams.get('name');
-
-	async function handleNameFilterSubmit() {
-		const url = new URL($page.url);
-		if (nameFilter === '') {
-			url.searchParams.delete('name');
-		} else {
-			url.searchParams.set('name', `${nameFilter}`);
-		}
-		url.searchParams.delete('page');
-		await goto(url.href);
-	}
 </script>
 
 <main>
-	<form on:submit|preventDefault={handleNameFilterSubmit}>
-		<input bind:value={nameFilter} placeholder="filter by event name..." />
-	</form>
+	<Filters />
 
-	<table>
-		<thead>
-			<tr>
-				<th on:click={toggleSortByName}>what</th>
-				<th on:click={toggleSortByStarts}>when</th>
-				<th on:click={toggleSortByVenue}>where</th>
-				<th>who</th>
-				<th />
-			</tr>
-		</thead>
-
-		<tbody>
-			{#each events as event}
+	<div class="table">
+		<table>
+			<thead>
 				<tr>
-					<td><a href="/events/{event.id}">{event.name}</a></td>
-					<td>{formatToLocalDate(event.starts, 'd/M')}</td>
-					<td>{event.venue.name}</td>
-					<td>
-						{#if eventResponseMap[event.id] !== undefined}
-							{#each eventResponseMap[event.id] as response}
-								<img use:tooltip title={response.profile.name} src={response.profile.avatar} alt="avatar for {response.profile.name}" />
-							{/each}
-						{/if}
-					</td>
-					<td />
+					<th class:sortAsc={sort === 'name'} class:sortDesc={sort === '-name'} on:click={toggleSortByName}>what</th>
+					<th class:sortAsc={sort === 'starts'} class:sortDesc={sort === '-starts'} on:click={toggleSortByStarts}>when</th>
+					<th class:sortAsc={sort === 'venue'} class:sortDesc={sort === '-venue'} on:click={toggleSortByVenue}>where</th>
+					<th>who</th>
+					<th />
 				</tr>
-			{/each}
-		</tbody>
-	</table>
+			</thead>
+
+			<tbody>
+				{#each events as event}
+					<tr>
+						<td><a href="/events/{event.id}">{event.name}</a></td>
+						<td>{formatToLocalDate(event.starts, 'd/M')}</td>
+						<td>{event.venue.name}</td>
+						<td>
+							{#if eventResponseMap[event.id] !== undefined}
+								{#each eventResponseMap[event.id] as response}
+									<img use:tooltip title={response.profile.name} src={response.profile.avatar} alt="avatar for {response.profile.name}" />
+								{/each}
+							{/if}
+						</td>
+						<td />
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
 </main>
 
 <footer>
@@ -92,11 +81,8 @@
 </footer>
 
 <style>
-	input {
-		padding: 0.5rem;
-		margin-bottom: 1rem;
-
-		background-color: var(--bg-secondary);
+	.table {
+		overflow: auto;
 	}
 
 	table {
@@ -136,6 +122,27 @@
 		color: var(--fg);
 		font-weight: 600;
 		border-bottom: 2px solid var(--bg-secondary);
+	}
+
+	th::after {
+		display: inline-block;
+		font-size: xx-small;
+		vertical-align: baseline;
+		position: relative;
+		text-decoration: none;
+		color: var(--slate-400);
+	}
+
+	th.sortAsc::after {
+		content: '\a0\a0▼';
+		top: 0.4em;
+		text-decoration: none;
+	}
+
+	th.sortDesc::after {
+		content: '\a0\a0▲';
+		top: -0.4em;
+		text-decoration: none;
 	}
 
 	th:hover {
