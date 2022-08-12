@@ -3,14 +3,11 @@
 ---------------------------------------------------------------------------- */
 html {
 	--text: #eee;
-	--background-primary: #121214;
-	--background-secondary: #212123;
-	--background-tertiary: #29292a;
-	--primary: #31af6e;
-	--primary-hover: #45cb85;
-
-	--main-spacing: 3rem 1rem 2rem 1rem;
-	--header-footer-spacing: 2rem 1rem;
+	--bg: #121214;
+	--bg-secondary: #212123;
+	--bg-hover: #29292a;
+	--fg: #31af6e;
+	--fg-hover: #50ce8d;
 }
 
 @font-face {

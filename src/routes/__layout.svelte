@@ -3,6 +3,7 @@
 	import Nav from '$lib/components/Nav.svelte';
 	import '../app.css';
 	import '../reset.css';
+	import 'tippy.js/dist/tippy.css';
 
 	$: section = $page.url.pathname.split('/')[1];
 </script>
@@ -17,7 +18,7 @@
 	:global(html) {
 		font-family: 'Inter', 'system-ui';
 		color: var(--text);
-		background-color: var(--background-primary);
+		background-color: var(--bg);
 	}
 
 	:global(body) {
@@ -25,7 +26,7 @@
 
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 5rem 1fr 3rem;
+		grid-template-rows: 4rem 1fr 3rem;
 		grid-template-areas:
 			'header'
 			'main'
@@ -47,9 +48,12 @@
 		max-width: 1080px;
 
 		margin: 0 auto;
+		padding: 0.5rem;
 	}
 
 	:global(footer) {
 		grid-area: 'footer';
+
+		border-top: 2px solid var(--bg-secondary);
 	}
 </style>

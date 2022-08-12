@@ -4,6 +4,7 @@
 
 	import type { Event, EventResponse } from '$lib/types';
 	import { formatToLocalDate } from '$lib/utils';
+	import { tooltip } from '$lib/components/tooltip';
 
 	import Pagination from '$lib/components/Pagination.svelte';
 
@@ -26,6 +27,15 @@
 		}
 		await goto(url.href);
 	}
+	async function toggleSortByName() {
+		toggleSort('name');
+	}
+	async function toggleSortByStarts() {
+		toggleSort('starts');
+	}
+	async function toggleSortByVenue() {
+		toggleSort('venue');
+	}
 
 	let nameFilter = $page.url.searchParams.get('name');
 
@@ -47,47 +57,33 @@
 	</form>
 
 	<table>
-		<tr>
-			<th
-				class:sortAsc={sort === 'name'}
-				class:sortDesc={sort === '-name'}
-				class="sortable"
-				on:click={async () => {
-					toggleSort('name');
-				}}>what</th
-			>
-			<th
-				class:sortAsc={sort === 'starts'}
-				class:sortDesc={sort === '-starts'}
-				class="sortable"
-				on:click={async () => {
-					toggleSort('starts');
-				}}>when</th
-			>
-			<th
-				class:sortAsc={sort === 'venue'}
-				class:sortDesc={sort === '-venue'}
-				class="sortable"
-				on:click={async () => {
-					toggleSort('venue');
-				}}>where</th
-			>
-			<th>who</th>
-		</tr>
-		{#each events as event}
+		<thead>
 			<tr>
-				<td><a href="/events/{event.id}">{event.name}</a></td>
-				<td>{formatToLocalDate(event.starts, 'd/M yyyy')}</td>
-				<td>{event.venue.name}</td>
-				<td class="avatars">
-					{#if eventResponseMap[event.id] !== undefined}
-						{#each eventResponseMap[event.id] as response}
-							<img src={response.profile.avatar} alt="avatar for {response.profile.name}" />
-						{/each}
-					{/if}
-				</td>
+				<th on:click={toggleSortByName}>what</th>
+				<th on:click={toggleSortByStarts}>when</th>
+				<th on:click={toggleSortByVenue}>where</th>
+				<th>who</th>
+				<th />
 			</tr>
-		{/each}
+		</thead>
+
+		<tbody>
+			{#each events as event}
+				<tr>
+					<td><a href="/events/{event.id}">{event.name}</a></td>
+					<td>{formatToLocalDate(event.starts, 'd/M')}</td>
+					<td>{event.venue.name}</td>
+					<td>
+						{#if eventResponseMap[event.id] !== undefined}
+							{#each eventResponseMap[event.id] as response}
+								<img use:tooltip title={response.profile.name} src={response.profile.avatar} alt="avatar for {response.profile.name}" />
+							{/each}
+						{/if}
+					</td>
+					<td />
+				</tr>
+			{/each}
+		</tbody>
 	</table>
 </main>
 
@@ -100,62 +96,65 @@
 		padding: 0.5rem;
 		margin-bottom: 1rem;
 
-		background-color: var(--background-secondary);
+		background-color: var(--bg-secondary);
+	}
+
+	table {
+		display: grid;
+
+		grid-template-columns:
+			minmax(2rem, 2fr)
+			minmax(2rem, 1fr)
+			minmax(2rem, 2fr)
+			minmax(2rem, 3fr)
+			minmax(2rem, 1fr);
+
+		min-width: 40rem;
+	}
+
+	thead,
+	tbody,
+	tr {
+		display: contents;
+	}
+
+	td,
+	th {
+		position: relative;
+
+		display: flex;
+		align-items: center;
+
+		padding: 0.5rem;
+
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	th {
-		padding: 0.5rem;
-
-		background-color: var(--background-secondary);
+		color: var(--fg);
+		font-weight: 600;
+		border-bottom: 2px solid var(--bg-secondary);
 	}
 
-	th.sortable:hover {
-		text-decoration: underline;
+	th:hover {
+		color: var(--fg-hover);
 	}
 
-	th::after {
-		display: inline-block;
-		font-size: xx-small;
-		vertical-align: baseline;
-		position: relative;
-		text-decoration: none;
-		color: var(--slate-400);
+	tr:nth-child(even) > td {
+		background-color: var(--bg-secondary);
 	}
 
-	th.sortAsc::after {
-		content: '\a0\a0▼';
-		top: 0.1em;
-		text-decoration: none;
-	}
-
-	th.sortDesc::after {
-		content: '\a0\a0▲';
-		top: -0.4em;
-		text-decoration: none;
-	}
-
-	td {
-		padding: 0.5rem;
-	}
-
-	td a:hover {
-		text-decoration: underline;
-	}
-
-	tr:hover {
-		background-color: var(--background-tertiary);
-	}
-
-	.avatars {
-		position: relative;
-
-		padding: 0rem;
+	tr:hover > td {
+		background-color: var(--bg-hover);
 	}
 
 	img {
 		position: absolute;
+
 		object-fit: cover;
-		height: 2rem;
-		width: 2rem;
+		height: 1.5rem;
+		width: 1.5rem;
 	}
 </style>

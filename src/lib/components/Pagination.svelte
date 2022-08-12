@@ -136,7 +136,7 @@
 		min-width: 2rem;
 		padding: 0 0.5rem;
 
-		background-color: var(--background-secondary);
+		background-color: var(--bg-secondary);
 		font-weight: 600;
 	}
 
@@ -146,6 +146,6 @@
 	}
 
 	.currentPage {
-		color: var(--primary);
+		color: var(--fg);
 	}
 </style>

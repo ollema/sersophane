@@ -16,11 +16,9 @@
 
 <style>
 	nav {
-		margin-top: 0.5rem;
-		margin-bottom: 1rem;
-
 		color: var(--text);
 		font-weight: 600;
+		border-bottom: 2px solid var(--bg-secondary);
 	}
 
 	nav > div {
@@ -28,7 +26,7 @@
 		align-items: center;
 		justify-content: space-between;
 
-		max-width: calc(1080px + 2rem);
+		max-width: 1080px;
 		margin: 0 auto;
 	}
 
@@ -46,13 +44,13 @@
 		transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 	}
 
-	a:hover {
-		color: var(--primary-hover);
-		border-color: var(--primary-hover);
+	a.selected {
+		color: var(--fg);
+		border-color: var(--fg);
 	}
 
-	a.selected {
-		color: var(--primary);
-		border-color: var(--primary);
+	a:hover {
+		color: var(--fg-hover);
+		border-color: var(--fg-hover);
 	}
 </style>
