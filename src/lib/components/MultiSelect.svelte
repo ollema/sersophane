@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let searchText = ``;
+	import { tooltip } from '$lib/components/tooltip';
+
+	export let searchText = '';
 	export let showOptions = false;
 	export let options: Option[];
 	export let matchingOptions: Option[] = [];
@@ -163,8 +165,6 @@
 	class:invalid
 	class="multiselect"
 	on:mouseup|stopPropagation={() => setOptionsVisible(true)}
-	title={null}
-	aria-disabled={null}
 >
 	<input
 		{required}
@@ -181,11 +181,12 @@
 			<li aria-selected="true">
 				{option.label}
 				<button
+					use:tooltip
+					title="remove {option.label}"
 					class="remove-icon"
 					on:mouseup|stopPropagation={() => remove(option)}
 					on:keydown={if_enter_or_space(() => remove(option))}
 					type="button"
-					title="remove {option.label}"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22.5 22.5" stroke="currentColor" stroke-width="2">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
