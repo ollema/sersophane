@@ -54,6 +54,6 @@
 	:global(footer) {
 		grid-area: 'footer';
 
-		border-top: 2px solid var(--bg-secondary);
+		border-top: 3px solid var(--bg-secondary);
 	}
 </style>

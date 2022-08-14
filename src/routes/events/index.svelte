@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import type { Event, EventResponse } from '$lib/types';
+	import type { Event, EventResponse, Venue } from '$lib/types';
 	import { formatToLocalDate } from '$lib/utils';
 	import { tooltip } from '$lib/components/tooltip';
 
@@ -12,6 +12,7 @@
 
 	export let events: Event[];
 	export let eventResponseMap: { [eventId: string]: EventResponse[] };
+	export let allVenues: Venue[];
 	export let currentPage: number | undefined = undefined;
 	export let perPage: number;
 	export let totalItems: number;
@@ -41,7 +42,7 @@
 </script>
 
 <main>
-	<Filters />
+	<Filters {allVenues} />
 
 	<div class="table">
 		<table>
@@ -121,7 +122,7 @@
 	th {
 		color: var(--fg);
 		font-weight: 600;
-		border-bottom: 2px solid var(--bg-secondary);
+		border-bottom: 3px solid var(--bg-secondary);
 	}
 
 	th::after {

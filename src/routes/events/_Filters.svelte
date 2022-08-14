@@ -1,16 +1,30 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, prefetch } from '$app/navigation';
 	import { page } from '$app/stores';
+
+	import MultiSelect from '$lib/components/MultiSelect.svelte';
+
+	import type { Venue } from '$lib/types';
+	import { filtersFromSearchParams } from '$lib/utils';
 
 	let showFilters = false;
 
-	export function show() {
+	function show() {
 		showFilters = !showFilters;
 	}
 
+	// filter by name
 	let nameFilter = $page.url.searchParams.get('name');
-	let venueFilter = $page.url.searchParams.get('venue');
-	// let profileFilter = $page.url.searchParams.get('profile.name');
+
+	// filter by venue
+	export let allVenues: Venue[];
+	const allVenueOptions: { label: string; value: Venue }[] = allVenues.map((venue) => {
+		return {
+			label: venue.name,
+			value: venue
+		};
+	});
+	let selectedVenueOptions: { label: string; value: Venue }[] = filtersFromSearchParams($page.url.searchParams, 'venue', allVenues);
 
 	async function handleFilterSubmit() {
 		const url = new URL($page.url);
@@ -21,15 +35,29 @@
 			url.searchParams.set('name', `${nameFilter}`);
 		}
 
-		if (venueFilter === '' || venueFilter === null) {
-			url.searchParams.delete('venue');
-		} else {
-			url.searchParams.set('venue', `${venueFilter}`);
+		url.searchParams.delete('venue');
+		for (const venueFilter of selectedVenueOptions) {
+			url.searchParams.append('venue', venueFilter.label as string);
 		}
 
 		url.searchParams.delete('page');
 
-		await goto(url.href);
+		prefetch(url.href);
+		await goto(url.href, { keepfocus: true });
+	}
+
+	async function clear() {
+		const url = new URL($page.url);
+
+		nameFilter = null;
+		selectedVenueOptions = [];
+
+		url.searchParams.delete('name');
+		url.searchParams.delete('venue');
+		url.searchParams.delete('page');
+
+		prefetch(url.href);
+		await goto(url.href, { keepfocus: true });
 	}
 </script>
 
@@ -42,16 +70,20 @@
 				<div class="inputs">
 					<div>
 						<label for="name">filter by name:</label>
-						<input bind:value={nameFilter} id="name" type="text" autocomplete="off" placeholder="event name" />
+						<!-- svelte-ignore a11y-autofocus -->
+						<input bind:value={nameFilter} id="name" type="text" autocomplete="off" placeholder="event name" autofocus />
 					</div>
 
 					<div>
 						<label for="venue"> filter by venue: </label>
-						<input bind:value={venueFilter} id="venue" type="text" autocomplete="off" placeholder="venue" />
+						<MultiSelect bind:selected={selectedVenueOptions} options={allVenueOptions} placeholder={'venue'} />
 					</div>
 				</div>
 
-				<button type="submit">apply filters</button>
+				<div class="buttons">
+					<button type="submit">apply filters</button>
+					<button type="button" on:click={clear}>clear filters</button>
+				</div>
 			</form>
 		</div>
 	{/if}
@@ -68,14 +100,10 @@
 		background-color: var(--bg-secondary);
 	}
 
-	button:hover {
-		text-decoration: underline;
-	}
-
 	.filters {
 		padding: 1rem;
 
-		border: 2px solid var(--bg-secondary);
+		border: 3px solid var(--bg-secondary);
 	}
 
 	.inputs {
@@ -83,7 +111,7 @@
 
 		flex-wrap: wrap;
 
-		gap: 1.5rem;
+		gap: 2rem;
 
 		margin-bottom: 1rem;
 	}
@@ -95,13 +123,28 @@
 	input {
 		display: block;
 
+		max-width: 15rem;
+
 		padding-top: 0.5rem;
 		padding-bottom: 0.25rem;
 
-		border-bottom: 2px solid var(--bg-secondary);
+		border-bottom: 3px solid var(--bg-secondary);
+	}
+
+	input:hover,
+	input:focus {
+		border-bottom: 3px solid var(--fg);
 	}
 
 	input::placeholder {
 		color: var(--text-darker);
+	}
+
+	.buttons {
+		display: flex;
+
+		flex-wrap: wrap;
+
+		gap: 1rem;
 	}
 </style>

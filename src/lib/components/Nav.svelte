@@ -18,7 +18,7 @@
 	nav {
 		color: var(--text);
 		font-weight: 600;
-		border-bottom: 2px solid var(--bg-secondary);
+		border-bottom: 3px solid var(--bg-secondary);
 	}
 
 	nav > div {
@@ -49,7 +49,8 @@
 		border-color: var(--fg);
 	}
 
-	a:hover {
+	a.selected:hover,
+	a.selected:focus {
 		color: var(--fg-hover);
 		border-color: var(--fg-hover);
 	}

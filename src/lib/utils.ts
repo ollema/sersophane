@@ -18,3 +18,29 @@ export function formatToUTCDate(date: string | Date, format = 'yyyy-MM-dd HH:mm:
 export function formatToLocalDate(date: string | Date, format = 'yyyy-MM-dd HH:mm:ss') {
 	return getDateTime(date).toLocal().toFormat(format);
 }
+
+export function filtersFromSearchParams<Type extends { name: string }>(
+	searchParams: URLSearchParams,
+	filter: string,
+	arr: Array<Type>
+): { label: string; value: Type }[] {
+	const valueMap = arr.reduce((map, element) => {
+		map[element['name']] = element;
+		return map;
+	}, {} as { [key: string]: Type });
+
+	const labels = searchParams.getAll(filter);
+
+	return [
+		...new Map(
+			labels
+				.map((label) => {
+					return {
+						label: label,
+						value: valueMap[label]
+					};
+				})
+				.map((option) => [option['label'], option])
+		).values()
+	];
+}

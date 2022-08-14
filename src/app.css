@@ -8,7 +8,7 @@ html {
 	--bg-secondary: #212123;
 	--bg-hover: #29292a;
 	--fg: #31af6e;
-	--fg-hover: #50ce8d;
+	--fg-hover: #60d297;
 }
 
 @font-face {
@@ -73,4 +73,35 @@ html {
 	font-weight: 700;
 	font-display: swap;
 	src: url('/fonts/Inter-BoldItalic.woff2?v=3.19') format('woff2'), url('/fonts/Inter-BoldItalic.woff?v=3.19') format('woff');
+}
+
+/* custom scrollbar */
+::-webkit-scrollbar {
+	width: 20px;
+	height: 20px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--bg-secondary);
+	border-radius: 20px;
+	border: 6px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--bg-hover);
+}
+
+a:hover,
+button:hover {
+	color: var(--fg);
+}
+
+a:focus,
+button:focus {
+	color: var(--fg);
 }

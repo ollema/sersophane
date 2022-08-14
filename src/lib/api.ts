@@ -74,12 +74,18 @@ function parseQueryParams(urlParams: URLSearchParams) {
 		filters.push(`name ~ "${filterNameParam}"`);
 	}
 
-	const venueFilterParam = urlParams.get('venue');
-	if (venueFilterParam !== null) {
-		filters.push(`venue.name ~ "${venueFilterParam}"`);
+	const venueFilterParams = urlParams.getAll('venue');
+	const venueFilters: string[] = [];
+	for (const venueFilterParam of venueFilterParams) {
+		venueFilters.push(`venue.name ~ "${venueFilterParam}"`);
+	}
+	if (venueFilters.length > 0) {
+		filters.push(venueFilters.join(' || '));
 	}
 
 	queryParams.filter = filters.join(' && ');
+
+	console.log(queryParams.filter);
 
 	return { page: page, perPage: perPage, queryParams: queryParams };
 }
