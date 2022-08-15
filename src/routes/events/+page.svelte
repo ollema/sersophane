@@ -1,22 +1,17 @@
 <script lang="ts">
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+
 	import Filters from './_Filters.svelte';
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import type { Event, EventResponse, Venue } from '$lib/types';
 	import { formatToLocalDate } from '$lib/utils';
 	import { tooltip } from '$lib/components/tooltip';
 
 	import Pagination from '$lib/components/Pagination.svelte';
-
-	export let events: Event[];
-	export let eventResponseMap: { [eventId: string]: EventResponse[] };
-	export let allVenues: Venue[];
-	export let currentPage: number | undefined = undefined;
-	export let perPage: number;
-	export let totalItems: number;
-	export let sort: string | null;
 
 	async function toggleSort(sortBy: string) {
 		const url = new URL($page.url);
@@ -42,29 +37,29 @@
 </script>
 
 <main>
-	<Filters {allVenues} />
+	<Filters allVenues={data.allVenues} />
 
 	<div class="table">
 		<table>
 			<thead>
 				<tr>
-					<th class:sortAsc={sort === 'name'} class:sortDesc={sort === '-name'} on:click={toggleSortByName}>what</th>
-					<th class:sortAsc={sort === 'starts'} class:sortDesc={sort === '-starts'} on:click={toggleSortByStarts}>when</th>
-					<th class:sortAsc={sort === 'venue'} class:sortDesc={sort === '-venue'} on:click={toggleSortByVenue}>where</th>
+					<th class:sortAsc={data.sort === 'name'} class:sortDesc={data.sort === '-name'} on:click={toggleSortByName}>what</th>
+					<th class:sortAsc={data.sort === 'starts'} class:sortDesc={data.sort === '-starts'} on:click={toggleSortByStarts}>when</th>
+					<th class:sortAsc={data.sort === 'venue'} class:sortDesc={data.sort === '-venue'} on:click={toggleSortByVenue}>where</th>
 					<th>who</th>
 					<th />
 				</tr>
 			</thead>
 
 			<tbody>
-				{#each events as event}
+				{#each data.events as event}
 					<tr>
 						<td><a href="/events/{event.id}">{event.name}</a></td>
 						<td>{formatToLocalDate(event.starts, 'd/M')}</td>
 						<td>{event.venue.name}</td>
 						<td>
-							{#if eventResponseMap[event.id] !== undefined}
-								{#each eventResponseMap[event.id] as response}
+							{#if data.eventResponseMap[event.id] !== undefined}
+								{#each data.eventResponseMap[event.id] as response}
 									<img use:tooltip title={response.profile.name} src={response.profile.avatar} alt="avatar for {response.profile.name}" />
 								{/each}
 							{/if}
@@ -78,7 +73,7 @@
 </main>
 
 <footer>
-	<Pagination {currentPage} {perPage} {totalItems} />
+	<Pagination currentPage={data.currentPage} perPage={data.perPage} totalItems={data.totalItems} />
 </footer>
 
 <style>

@@ -1,41 +1,40 @@
 <script lang="ts">
-	import type { Event, EventResponse } from '$lib/types';
+	import type { PageData } from './$types';
 
-	export let event: Event;
-	export let eventResponses: EventResponse[];
+	export let data: PageData;
 </script>
 
 <main>
 	<table>
 		<tr>
 			<td>id</td>
-			<td>{event.id}</td>
+			<td>{data.event.id}</td>
 		</tr>
 		<tr>
 			<td>name</td>
-			<td>{event.name}</td>
+			<td>{data.event.name}</td>
 		</tr>
 		<tr>
 			<td>venue - id</td>
-			<td>{event.venue.id}</td>
+			<td>{data.event.venue.id}</td>
 		</tr>
 		<tr>
 			<td>venue - name</td>
-			<td>{event.venue.name}</td>
+			<td>{data.event.venue.name}</td>
 		</tr>
 		<tr>
 			<td>venue - url</td>
-			<td>{event.venue.url}</td>
+			<td>{data.event.venue.url}</td>
 		</tr>
 		<tr>
 			<td>venue - city - id</td>
-			<td>{event.venue.city.id}</td>
+			<td>{data.event.venue.city.id}</td>
 		</tr>
 		<tr>
 			<td>venue - city - name</td>
-			<td>{event.venue.city.name}</td>
+			<td>{data.event.venue.city.name}</td>
 		</tr>
-		{#each event.artists as artist, i}
+		{#each data.event.artists as artist, i}
 			<tr>
 				<td>artist {i + 1} - id</td>
 				<td>{artist.id}</td>
@@ -51,21 +50,21 @@
 		{/each}
 		<tr>
 			<td>type</td>
-			<td>{event.type}</td>
+			<td>{data.event.type}</td>
 		</tr>
 		<tr>
 			<td>cancelled</td>
-			<td>{event.cancelled}</td>
+			<td>{data.event.cancelled}</td>
 		</tr>
 		<tr>
 			<td>starts</td>
-			<td>{event.starts}</td>
+			<td>{data.event.starts}</td>
 		</tr>
 		<tr>
 			<td>ends</td>
-			<td>{event.ends}</td>
+			<td>{data.event.ends}</td>
 		</tr>
-		{#each eventResponses as response, i}
+		{#each data.eventResponses as response, i}
 			<tr>
 				<td>response {i + 1} - id</td>
 				<td>{response.id}</td>
@@ -89,7 +88,7 @@
 		{/each}
 		<tr>
 			<td>url</td>
-			<td>{event.url}</td>
+			<td>{data.event.url}</td>
 		</tr>
 	</table>
 </main>

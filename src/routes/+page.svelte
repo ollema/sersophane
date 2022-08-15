@@ -1,7 +1,3 @@
-<script context="module">
-	export const prerender = true;
-</script>
-
 <svelte:head>
 	<title>sersophane</title>
 </svelte:head>
