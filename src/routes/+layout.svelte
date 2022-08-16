@@ -5,12 +5,18 @@
 	import '../reset.css';
 	import 'tippy.js/dist/tippy.css';
 
+	import type { LayoutServerData } from '.svelte-kit/types/src/routes/$types';
+
+	export let data: LayoutServerData;
+
 	$: section = $page.url.pathname.split('/')[1];
 </script>
 
 <header>
 	<Nav {section} />
 </header>
+
+{JSON.stringify(data)}
 
 <slot />
 
