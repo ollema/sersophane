@@ -21,7 +21,7 @@ export async function getEvents(url: URL) {
 		page: page,
 		perPage: perPage,
 		totalItems: result.totalItems,
-		sort: queryParams.sort
+		sortBy: queryParams.sort
 	};
 }
 

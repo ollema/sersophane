@@ -11,7 +11,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	$: ({ events, eventResponseMap, allVenues, currentPage, perPage, totalItems, sort } = data);
+	$: ({ events, eventResponseMap, allVenues, currentPage, perPage, totalItems, sortBy } = data);
 
 	async function toggleSort(sortBy: string) {
 		const url = new URL($page.url);
@@ -43,9 +43,9 @@
 		<table>
 			<thead>
 				<tr>
-					<th class:sortAsc={sort === 'name'} class:sortDesc={sort === '-name'} on:click={toggleSortByName}>what</th>
-					<th class:sortAsc={sort === 'starts'} class:sortDesc={sort === '-starts'} on:click={toggleSortByStarts}>when</th>
-					<th class:sortAsc={sort === 'venue'} class:sortDesc={sort === '-venue'} on:click={toggleSortByVenue}>where</th>
+					<th class:sortAsc={sortBy === 'name'} class:sortDesc={sortBy === '-name'} on:click={toggleSortByName}>what</th>
+					<th class:sortAsc={sortBy === 'starts'} class:sortDesc={sortBy === '-starts'} on:click={toggleSortByStarts}>when</th>
+					<th class:sortAsc={sortBy === 'venue'} class:sortDesc={sortBy === '-venue'} on:click={toggleSortByVenue}>where</th>
 					<th>who</th>
 					<th />
 				</tr>
