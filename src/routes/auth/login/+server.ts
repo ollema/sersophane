@@ -4,7 +4,7 @@ import cookie from 'cookie';
 const defaultCookieOptions = { maxAge: 30 * 24 * 60 * 60, path: '/', httpOnly: true, sameSite: true, secure: true };
 
 export const POST: RequestHandler = async ({ request, locals: { pocketbase } }) => {
-	const response = new Response('');
+	const response = new Response('{}');
 
 	const { email, password } = await request.json();
 	try {
