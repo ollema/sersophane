@@ -1,18 +1,15 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import cookie from 'cookie';
 
-const defaultCookieOptions = { maxAge: 30 * 24 * 60 * 60, path: '/', httpOnly: true, sameSite: true, secure: true };
+const defaultCookieOptions = { maxAge: -1, path: '/', httpOnly: true, sameSite: true, secure: true };
 
-export const POST: RequestHandler = async ({ request, locals: { pocketbase } }) => {
+export const POST: RequestHandler = async ({ locals }) => {
 	const response = new Response('{}');
 
-	const { email, password } = await request.json();
-	try {
-		const { token, user } = await pocketbase.users.authViaEmail(email, password);
-		pocketbase.authStore.save(token, user);
-		response.headers.append('Set-Cookie', cookie.serialize('token', token, defaultCookieOptions));
-		response.headers.append('Set-Cookie', cookie.serialize('user', JSON.stringify(user), defaultCookieOptions));
-	} catch {}
+	locals.pocketbase.authStore.clear();
+	locals.user = undefined;
+	response.headers.append('Set-Cookie', cookie.serialize('token', '', defaultCookieOptions));
+	response.headers.append('Set-Cookie', cookie.serialize('user', '', defaultCookieOptions));
 
 	return response;
 };

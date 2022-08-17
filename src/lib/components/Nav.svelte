@@ -27,7 +27,7 @@
 				<a sveltekit:prefetch href="/">{user.profile?.name}</a>
 				<button on:click={signout} type="button">sign out</button>
 			{:else}
-				<a sveltekit:prefetch href="/">user: ...</a>
+				<a sveltekit:prefetch href="/signin">sign in</a>
 			{/if}
 		</div>
 	</div>
@@ -56,18 +56,18 @@
 		gap: 1rem;
 	}
 
-	.left-nav > a {
-		padding: 0.75em 0.5em;
-
-		border-bottom: 4px solid rgba(0, 0, 0, 0);
-		transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-	}
-
 	.right-nav {
 		display: flex;
 		align-items: center;
 
 		gap: 1rem;
+	}
+
+	a {
+		padding: 0.75em 0.5em;
+
+		border-bottom: 4px solid rgba(0, 0, 0, 0);
+		transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 	}
 
 	a.selected {
