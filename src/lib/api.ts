@@ -85,8 +85,6 @@ function parseQueryParams(urlParams: URLSearchParams) {
 
 	queryParams.filter = filters.join(' && ');
 
-	console.log(queryParams.filter);
-
 	return { page: page, perPage: perPage, queryParams: queryParams };
 }
 

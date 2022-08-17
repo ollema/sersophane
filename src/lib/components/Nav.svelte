@@ -1,5 +1,17 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+
+	import type { User } from 'pocketbase';
+
 	export let section: string;
+	export let user: User | undefined;
+
+	async function signout() {
+		const url = $page.url;
+		await fetch('auth/signout', { method: 'POST' });
+		goto(url);
+	}
 </script>
 
 <nav>
@@ -10,7 +22,14 @@
 			<a sveltekit:prefetch href="/about" class:selected={section === 'about'}>about</a>
 		</div>
 
-		<a sveltekit:prefetch href="/" class:selected={section === 'profile'}>user: ...</a>
+		<div class="right-nav">
+			{#if user}
+				<a sveltekit:prefetch href="/">{user.profile?.name}</a>
+				<button on:click={signout} type="button">sign out</button>
+			{:else}
+				<a sveltekit:prefetch href="/">user: ...</a>
+			{/if}
+		</div>
 	</div>
 </nav>
 
@@ -37,11 +56,18 @@
 		gap: 1rem;
 	}
 
-	a {
+	.left-nav > a {
 		padding: 0.75em 0.5em;
 
 		border-bottom: 4px solid rgba(0, 0, 0, 0);
 		transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+	}
+
+	.right-nav {
+		display: flex;
+		align-items: center;
+
+		gap: 1rem;
 	}
 
 	a.selected {

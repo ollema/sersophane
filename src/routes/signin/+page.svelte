@@ -1,13 +1,17 @@
 <script>
-	import { post } from '$lib/utils';
 	import { goto } from '$app/navigation';
 
 	let email = '';
 	let password = '';
 
 	async function submit() {
-		const response = await post('auth/login', { email, password });
-		console.log(response);
+		await fetch('auth/signin', {
+			method: 'POST',
+			body: JSON.stringify({ email, password }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
 		goto('/');
 	}
 </script>

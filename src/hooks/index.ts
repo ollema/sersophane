@@ -12,7 +12,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return await resolve(event);
 	}
 
-	client.authStore.save(token, JSON.parse(user));
+	client.authStore.save(token, new User(JSON.parse(user)));
+	if (client.authStore.isValid) {
+		event.locals.user = client.authStore.model as User;
+	}
 
 	return await resolve(event);
 };
