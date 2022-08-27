@@ -1,5 +1,5 @@
 <script>
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 
 	let email = '';
 	let password = '';
@@ -12,6 +12,7 @@
 				'Content-Type': 'application/json'
 			}
 		});
+		await invalidate();
 		goto('/');
 	}
 </script>

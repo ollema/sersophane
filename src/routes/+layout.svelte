@@ -8,13 +8,13 @@
 	import type { LayoutServerData } from './$types';
 
 	export let data: LayoutServerData;
-	$: ({ user } = data);
+	$: ({ profile } = data);
 
 	$: section = $page.url.pathname.split('/')[1];
 </script>
 
 <header>
-	<Nav {section} {user} />
+	<Nav {section} {profile} />
 </header>
 
 <slot />

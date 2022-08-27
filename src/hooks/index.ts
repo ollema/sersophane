@@ -1,21 +1,18 @@
 import type { Handle } from '@sveltejs/kit';
 import PocketBase, { User } from 'pocketbase';
-import cookie from 'cookie';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const client = new PocketBase('http://127.0.0.1:8090');
-	event.locals.pocketbase = client;
+	event.locals.pocketbase = new PocketBase('http://127.0.0.1:8090');
+	event.locals.pocketbase.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
 
-	const { token, user } = cookie.parse(event.request.headers.get('Cookie') ?? '');
-
-	if (!token || !user) {
-		return await resolve(event);
+	if (event.locals.pocketbase.authStore.isValid) {
+		event.locals.user = event.locals.pocketbase.authStore.model as User;
 	}
 
-	client.authStore.save(token, new User(JSON.parse(user)));
-	if (client.authStore.isValid) {
-		event.locals.user = client.authStore.model as User;
-	}
+	const response = await resolve(event);
 
-	return await resolve(event);
+	// TODO: should probably enable secure cookies when deploying, ideally controlled with an env var
+	response.headers.set('set-cookie', event.locals.pocketbase.authStore.exportToCookie({ secure: false }));
+
+	return response;
 };

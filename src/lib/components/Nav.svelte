@@ -1,15 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 
-	import type { User } from 'pocketbase';
+	import type { Profile } from '$lib/types';
 
 	export let section: string;
-	export let user: User | undefined;
+	export let profile: Profile | undefined;
 
 	async function signout() {
 		const url = $page.url;
 		await fetch('auth/signout', { method: 'POST' });
+		console.log('invalidating');
+		await invalidate();
+		console.log('invalidated');
 		goto(url);
 	}
 </script>
@@ -23,11 +26,11 @@
 		</div>
 
 		<div class="right-nav">
-			{#if user}
-				<a sveltekit:prefetch href="/">{user.profile?.name}</a>
+			{#if profile}
+				<a href="/">{profile.name}</a>
 				<button on:click={signout} type="button">sign out</button>
 			{:else}
-				<a sveltekit:prefetch href="/signin">sign in</a>
+				<a href="/signin">sign in</a>
 			{/if}
 		</div>
 	</div>
@@ -63,8 +66,9 @@
 		gap: 1rem;
 	}
 
-	a {
-		padding: 0.75em 0.5em;
+	a,
+	button {
+		padding: 1rem 0.5rem 0.75rem 0.5rem;
 
 		border-bottom: 4px solid rgba(0, 0, 0, 0);
 		transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
