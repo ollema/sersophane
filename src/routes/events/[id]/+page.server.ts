@@ -1,9 +1,8 @@
+import { getEvent } from '../events';
 import type { PageServerLoad } from './$types';
 
-import { getEvent } from '$lib/api';
-
-export const load: PageServerLoad = async ({ params }) => {
-	const { event, eventResponses } = await getEvent(params.id);
+export const load: PageServerLoad = async ({ locals, params }) => {
+	const { event, eventResponses } = await getEvent(locals.pocketbase, params.id);
 
 	return {
 		event: event,

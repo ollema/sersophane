@@ -1,39 +1,9 @@
-import PocketBase, { Record as PocketBaseRecord } from 'pocketbase';
+import type PocketBase from 'pocketbase';
+import type { Record as PocketBaseRecord } from 'pocketbase';
 
-import type { Event, EventResponse, Venue } from '$lib/types';
-
-const client = new PocketBase('http://127.0.0.1:8090');
+import type { Event, EventResponse } from '$lib/types';
 
 const defaultEventQueryParams: Record<string, string | null> = { expand: 'venue.city, artists, responses.profile' };
-const defaultVenueQueryParams: Record<string, string | null> = { expand: 'city' };
-
-export async function getEvents(url: URL) {
-	const { page, perPage, queryParams } = parseQueryParams(new URLSearchParams(url.searchParams));
-	queryParams.expand = defaultEventQueryParams.expand;
-
-	const result = await client.records.getList('events', page, perPage, queryParams);
-	const events: Event[] = result.items.map(processEventRecord);
-	const eventResponseMap = await getEventResponseMap(events);
-
-	return {
-		events: events,
-		eventResponseMap: eventResponseMap,
-		page: page,
-		perPage: perPage,
-		totalItems: result.totalItems,
-		sortBy: queryParams.sort
-	};
-}
-
-export async function getEvent(id: string) {
-	const result = await client.records.getOne('events', id, defaultEventQueryParams);
-
-	const event: Event = processEventRecord(result);
-	const eventResponseMap = await getEventResponseMap([event]);
-	const eventResponses = eventResponseMap[event.id] || [];
-
-	return { event, eventResponses };
-}
 
 function parseQueryParams(urlParams: URLSearchParams) {
 	let page: number | undefined;
@@ -88,7 +58,35 @@ function parseQueryParams(urlParams: URLSearchParams) {
 	return { page: page, perPage: perPage, queryParams: queryParams };
 }
 
-function processEventRecord(record: PocketBaseRecord) {
+export async function getEvents(client: PocketBase, url: URL) {
+	const { page, perPage, queryParams } = parseQueryParams(new URLSearchParams(url.searchParams));
+	queryParams.expand = defaultEventQueryParams.expand;
+
+	const result = await client.records.getList('events', page, perPage, queryParams);
+	const events: Event[] = result.items.map(processEventRecord);
+	const eventResponseMap = await getEventResponseMap(client, events);
+
+	return {
+		events: events,
+		eventResponseMap: eventResponseMap,
+		page: page,
+		perPage: perPage,
+		totalItems: result.totalItems,
+		sortBy: queryParams.sort
+	};
+}
+
+export async function getEvent(client: PocketBase, id: string) {
+	const result = await client.records.getOne('events', id, defaultEventQueryParams);
+
+	const event: Event = processEventRecord(result);
+	const eventResponseMap = await getEventResponseMap(client, [event]);
+	const eventResponses = eventResponseMap[event.id] || [];
+
+	return { event, eventResponses };
+}
+
+function processEventRecord(record: PocketBaseRecord): Event {
 	return {
 		id: record.id,
 		name: record.name,
@@ -124,7 +122,7 @@ function processEventRecord(record: PocketBaseRecord) {
 	};
 }
 
-async function getEventResponseMap(events: Event[]) {
+async function getEventResponseMap(client: PocketBase, events: Event[]) {
 	const eventResponseMap: { [eventId: string]: EventResponse[] } = {};
 
 	const filter = events
@@ -134,7 +132,7 @@ async function getEventResponseMap(events: Event[]) {
 		.join(' || ');
 
 	const result = await client.records.getFullList('event_responses', undefined, { filter: filter, expand: 'event, profile' });
-	const eventResponses: EventResponse[] = result.map(processResponseRecord);
+	const eventResponses: EventResponse[] = result.map((record) => processResponseRecord(client, record));
 
 	for (const eventResponse of eventResponses) {
 		if (!eventResponseMap[eventResponse.event.id]) {
@@ -146,7 +144,7 @@ async function getEventResponseMap(events: Event[]) {
 	return eventResponseMap;
 }
 
-function processResponseRecord(record: PocketBaseRecord) {
+function processResponseRecord(client: PocketBase, record: PocketBaseRecord): EventResponse {
 	return {
 		id: record.id,
 		response: record.response,
@@ -156,32 +154,9 @@ function processResponseRecord(record: PocketBaseRecord) {
 		profile: {
 			id: record['@expand'].profile.id,
 			name: record['@expand'].profile.name,
-			// avatar: `http://127.0.0.1:8090/api/files/profiles/${record.id}/${record['@expand'].profile.avatar}`,
 			avatar: client.records.getFileUrl(record['@expand'].profile, record['@expand'].profile.avatar, { thumb: '100x100' }),
 			created: record['@expand'].profile.created,
 			updated: record['@expand'].profile.updated
-		},
-		created: record.created,
-		updated: record.updated
-	};
-}
-
-export async function getAllVenues() {
-	const result = await client.records.getFullList('venues', undefined, defaultVenueQueryParams);
-	const venues: Venue[] = result.map(processVenueRecord);
-
-	return venues;
-}
-
-function processVenueRecord(record: PocketBaseRecord) {
-	return {
-		id: record.id,
-		name: record.name,
-		city: {
-			id: record['@expand'].city.id,
-			name: record['@expand'].city.name,
-			created: record['@expand'].city.created,
-			updated: record['@expand'].city.updated
 		},
 		created: record.created,
 		updated: record.updated

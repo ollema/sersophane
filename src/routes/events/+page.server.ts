@@ -1,10 +1,11 @@
 import type { PageServerLoad } from './$types';
 
-import { getAllVenues, getEvents } from '$lib/api';
+import { getEvents } from './events';
+import { getAllVenues } from './venues';
 
-export const load: PageServerLoad = async ({ url }) => {
-	const { events, eventResponseMap, page, perPage, totalItems, sortBy } = await getEvents(url);
-	const allVenues = await getAllVenues();
+export const load: PageServerLoad = async ({ locals, url }) => {
+	const { events, eventResponseMap, page, perPage, totalItems, sortBy } = await getEvents(locals.pocketbase, url);
+	const allVenues = await getAllVenues(locals.pocketbase);
 
 	return {
 		events: events,
