@@ -4,8 +4,9 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
+	import { tooltip } from 'svooltip';
+
 	import { formatToLocalDate } from '$lib/utils';
-	import { tooltip } from '$lib/components/tooltip';
 	import Pagination from '$lib/components/Pagination.svelte';
 
 	import type { PageData } from './$types';
@@ -60,7 +61,11 @@
 						<td>
 							{#if eventResponseMap[event.id] !== undefined}
 								{#each eventResponseMap[event.id] as response}
-									<img use:tooltip title={response.profile.name} src={response.profile.avatar} alt="avatar for {response.profile.name}" />
+									<img
+										use:tooltip={{ content: response.profile.name }}
+										src={response.profile.avatar}
+										alt="avatar for {response.profile.name}"
+									/>
 								{/each}
 							{/if}
 						</td>

@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Nav from '$lib/components/Nav.svelte';
+
 	import '../app.css';
 	import '../reset.css';
-	import 'tippy.js/dist/tippy.css';
+
+	import 'svooltip/svooltip.css';
 
 	import type { LayoutServerData } from './$types';
 

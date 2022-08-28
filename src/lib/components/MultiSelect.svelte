@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tooltip } from '$lib/components/tooltip';
+	import { tooltip } from 'svooltip';
 
 	export let searchText = '';
 	export let showOptions = false;
@@ -181,8 +181,7 @@
 			<li aria-selected="true">
 				{option.label}
 				<button
-					use:tooltip
-					title="remove {option.label}"
+					use:tooltip={{ content: `remove ${option.label}` }}
 					class="remove-icon"
 					on:mouseup|stopPropagation={() => remove(option)}
 					on:keydown={if_enter_or_space(() => remove(option))}
