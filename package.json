@@ -24,7 +24,7 @@
 		"prettier": "^2.7.1",
 		"prettier-plugin-svelte": "^2.7.0",
 		"svelte": "^3.49.0",
-		"svelte-check": "^2.8.1",
+		"svelte-check": "^2.9.0",
 		"svelte-preprocess": "^4.10.7",
 		"svooltip": "^0.2.0",
 		"tslib": "^2.4.0",
@@ -33,7 +33,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"luxon": "^3.0.1",
-		"pocketbase": "^0.6.1"
+		"luxon": "^3.0.2",
+		"pocketbase": "^0.6.2"
 	}
 }
