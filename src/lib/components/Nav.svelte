@@ -3,6 +3,7 @@
 	import { goto, invalidate } from '$app/navigation';
 
 	import type { Profile } from '$lib/types';
+	import { DateTime } from 'luxon';
 
 	export let section: string;
 	export let profile: Profile | undefined;
@@ -10,9 +11,8 @@
 	async function signout() {
 		const url = $page.url;
 		await fetch('auth/signout', { method: 'POST' });
-		console.log('invalidating');
 		await invalidate();
-		console.log('invalidated');
+		console.log(DateTime.now().toFormat('HH:mm:ss'), 'signing out, invalidate() just awaited');
 		goto(url);
 	}
 </script>
