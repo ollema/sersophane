@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, prefetch } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	export let currentPage = 1;
@@ -70,6 +70,7 @@
 	async function gotoPage(selectedPage: number) {
 		const url = new URL($page.url);
 		url.searchParams.set('page', `${selectedPage}`);
+		prefetch(url.href);
 		await goto(url.href);
 	}
 </script>

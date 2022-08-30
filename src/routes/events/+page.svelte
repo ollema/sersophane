@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Filters from './Filters.svelte';
 
-	import { goto } from '$app/navigation';
+	import { goto, prefetch } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	import { tooltip } from 'svooltip';
@@ -24,6 +24,7 @@
 		} else {
 			url.searchParams.set('sort', `${sortBy}`);
 		}
+		prefetch(url.href);
 		await goto(url.href);
 	}
 	async function toggleSortByName() {

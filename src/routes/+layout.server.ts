@@ -1,10 +1,7 @@
 import type { Profile } from '$lib/types';
 import type { LayoutServerLoad } from '../../.svelte-kit/types/src/routes/$types';
-import { DateTime } from 'luxon';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
-	console.log(DateTime.now().toFormat('HH:mm:ss'), 'load in +layout.server.ts triggered');
-
 	let profile: Profile | undefined = undefined;
 
 	if (locals.user && locals.user.profile) {

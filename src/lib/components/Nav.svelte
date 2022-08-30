@@ -3,7 +3,6 @@
 	import { goto, invalidate } from '$app/navigation';
 
 	import type { Profile } from '$lib/types';
-	import { DateTime } from 'luxon';
 
 	export let section: string;
 	export let profile: Profile | undefined;
@@ -12,7 +11,6 @@
 		const url = $page.url;
 		await fetch('auth/signout', { method: 'POST' });
 		await invalidate();
-		console.log(DateTime.now().toFormat('HH:mm:ss'), 'signing out, invalidate() just awaited');
 		goto(url);
 	}
 </script>
@@ -20,9 +18,9 @@
 <nav>
 	<div>
 		<div class="left-nav">
-			<a sveltekit:prefetch href="/" class:selected={section === ''}>sersophane</a>
-			<a sveltekit:prefetch href="/events" class:selected={section === 'events'}>events</a>
-			<a sveltekit:prefetch href="/about" class:selected={section === 'about'}>about</a>
+			<a data-sveltekit-prefetch href="/" class:selected={section === ''}>sersophane</a>
+			<a data-sveltekit-prefetch href="/events" class:selected={section === 'events'}>events</a>
+			<a data-sveltekit-prefetch href="/about" class:selected={section === 'about'}>about</a>
 		</div>
 
 		<div class="right-nav">
