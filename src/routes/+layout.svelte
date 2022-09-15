@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Nav from '$lib/components/Nav.svelte';
+
+	import Nav from './Nav.svelte';
 
 	import '../app.css';
 	import '../reset.css';
