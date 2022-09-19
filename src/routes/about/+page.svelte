@@ -1,3 +1,3 @@
-<main />
+<main>about sersophane</main>
 
 <footer />

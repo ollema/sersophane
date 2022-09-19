@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { goto, invalidate } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 
 	import type { Profile } from '$lib/types';
 
@@ -8,10 +7,10 @@
 	export let profile: Profile | undefined;
 
 	async function signout() {
-		const url = $page.url;
 		await fetch('auth/signout', { method: 'POST' });
-		await invalidate();
-		goto(url);
+		console.log('signing out - await invalidateAll()');
+		await invalidateAll();
+		console.log('invalidateAll() awaited!');
 	}
 </script>
 

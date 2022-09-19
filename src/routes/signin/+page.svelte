@@ -1,5 +1,5 @@
 <script>
-	import { goto, invalidate } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 
 	let email = '';
 	let password = '';
@@ -12,7 +12,9 @@
 				'Content-Type': 'application/json'
 			}
 		});
-		await invalidate();
+		console.log('signing in - await invalidateAll()');
+		await invalidateAll();
+		console.log('invalidateAll() awaited!');
 		goto('/');
 	}
 </script>
