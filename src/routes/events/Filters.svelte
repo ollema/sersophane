@@ -89,62 +89,45 @@
 	{/if}
 </div>
 
-<style>
+<style lang="postcss">
 	.filter-component {
-		margin-bottom: 1rem;
+		@apply mb-4;
 	}
 
 	button {
-		padding: 0.5rem 0.75rem;
-
-		background-color: var(--bg-secondary);
+		@apply py-2 px-3 bg-zinc-800;
 	}
 
 	.filters {
-		padding: 1rem;
-
-		border: 3px solid var(--bg-secondary);
+		@apply p-4 border-2 border-zinc-800;
 	}
 
 	.inputs {
-		display: flex;
-
-		flex-wrap: wrap;
-
-		gap: 2rem;
-
-		margin-bottom: 1rem;
+		@apply flex flex-wrap gap-8 mb-4;
 	}
 
 	label {
-		display: inline-block;
+		@apply inline-block;
 	}
 
 	input {
-		display: block;
-
-		max-width: 15rem;
-
-		padding-top: 0.5rem;
-		padding-bottom: 0.25rem;
-
-		border-bottom: 3px solid var(--bg-secondary);
+		@apply block w-full max-w-[15rem] bg-zinc-900 border-0 border-b-2 border-zinc-800 focus:ring-0 focus:border-emerald-600 hover:border-emerald-300;
 	}
 
-	input:hover,
-	input:focus {
-		border-bottom: 3px solid var(--fg);
+	input:-webkit-autofill,
+	input:-webkit-autofill:hover,
+	input:-webkit-autofill:focus {
+		-webkit-text-fill-color: #a1a1aa;
+		caret-color: #a1a1aa;
+		box-shadow: 0 0 0px 1000px #18181b inset;
+		-webkit-box-shadow: 0 0 0px 1000px #18181b inset;
 	}
 
 	input::placeholder {
-		color: var(--text-darker);
+		@apply text-zinc-500;
 	}
 
 	.buttons {
-		display: flex;
-
-		flex-wrap: wrap;
-
-		gap: 1rem;
+		@apply flex flex-wrap gap-4;
 	}
 </style>

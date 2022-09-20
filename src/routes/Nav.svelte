@@ -25,58 +25,32 @@
 				<a href="/">{profile.name}</a>
 				<button on:click={signout} type="button">sign out</button>
 			{:else}
-				<a href="/signin">sign in</a>
+				<a class:selected={section === 'signin'} href="/signin">sign in</a>
 			{/if}
 		</div>
 	</div>
 </nav>
 
-<style>
+<style lang="postcss">
 	nav {
-		color: var(--text);
-		font-weight: 600;
-		border-bottom: 3px solid var(--bg-secondary);
+		@apply text-zinc-300 font-semibold border-b-2 border-zinc-800;
 	}
 
 	nav > div {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		max-width: 1080px;
-		margin: 0 auto;
+		@apply flex items-center justify-between max-w-6xl my-0 mx-auto;
 	}
 
-	.left-nav {
-		display: flex;
-		align-items: center;
-
-		gap: 1rem;
-	}
-
+	.left-nav,
 	.right-nav {
-		display: flex;
-		align-items: center;
-
-		gap: 1rem;
+		@apply flex items-start justify-center gap-4;
 	}
 
 	a,
 	button {
-		padding: 1rem 0.5rem 0.75rem 0.5rem;
-
-		border-bottom: 4px solid rgba(0, 0, 0, 0);
-		transition: border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+		@apply px-2 pt-4 pb-3 border-b-4 border-transparent transition-colors hover:text-emerald-400;
 	}
 
 	a.selected {
-		color: var(--fg);
-		border-color: var(--fg);
-	}
-
-	a.selected:hover,
-	a.selected:focus {
-		color: var(--fg-hover);
-		border-color: var(--fg-hover);
+		@apply text-emerald-600 border-emerald-600 hover:text-emerald-400 hover:border-emerald-400;
 	}
 </style>

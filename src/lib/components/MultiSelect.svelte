@@ -234,24 +234,9 @@
 	{/if}
 </div>
 
-<style>
+<style lang="postcss">
 	div.multiselect {
-		position: relative;
-
-		align-items: center;
-		display: flex;
-
-		max-width: 15rem;
-
-		padding: 0.5rem 0 0.25rem 0;
-
-		cursor: text;
-		border-bottom: 3px solid var(--bg-secondary);
-		background-color: var(--bg);
-	}
-
-	div.multiselect:hover {
-		border-bottom: 3px solid var(--fg);
+		@apply relative flex items-center max-w-[15rem] py-2 px-3 cursor-text bg-zinc-900 border-0 border-b-2 border-zinc-800 focus:ring-0 focus:border-emerald-600 hover:border-emerald-300;
 	}
 
 	div.multiselect.open {
@@ -259,72 +244,53 @@
 	}
 
 	div.multiselect > ul.selected {
-		display: flex;
-
-		flex-wrap: wrap;
-
-		gap: 0.5rem;
+		@apply flex flex-wrap gap-2;
 	}
 
 	div.multiselect > ul.selected > li {
-		display: flex;
-		align-items: center;
-
-		padding: 0 0.25rem 0 0.25rem;
-
-		white-space: nowrap;
-
-		background-color: var(--bg-secondary);
+		@apply flex items-center justify-center whitespace-nowrap bg-zinc-800;
 	}
 
 	div.multiselect > ul.selected > li > button.remove-icon {
-		display: flex;
-		align-items: center;
+		@apply flex items-center;
 	}
 
 	div.multiselect > ul.selected > li > button.remove-icon > svg {
-		height: 1rem;
-		width: 1rem;
-
-		color: var(--text);
+		@apply h-4 w-6 text-zinc-300;
 	}
 
 	div.multiselect > ul.selected > li > button.remove-icon > svg:hover,
 	div.multiselect > ul.selected > li > button.remove-icon:focus > svg {
-		color: red;
+		@apply text-rose-700;
 	}
 
 	div.multiselect > ul.selected > li > input {
-		flex: 1;
-		min-width: 1rem;
+		@apply flex-1 min-w-[1rem];
+	}
+
+	div.multiselect > ul.selected > li > input {
+		@apply block w-full max-w-[15rem] bg-zinc-900 ring-0;
+	}
+
+	div.multiselect > ul.selected > li > input:-webkit-autofill,
+	div.multiselect > ul.selected > li > input:-webkit-autofill:hover,
+	div.multiselect > ul.selected > li > input:-webkit-autofill:focus {
+		-webkit-text-fill-color: #a1a1aa;
+		caret-color: #a1a1aa;
+		box-shadow: 0 0 0px 1000px #18181b inset;
+		-webkit-box-shadow: 0 0 0px 1000px #18181b inset;
 	}
 
 	div.multiselect > ul.selected > li > input::placeholder {
-		color: var(--text-darker);
+		@apply text-zinc-500;
 	}
 
 	div.multiselect > input.form-control {
-		position: absolute;
-		background: transparent;
-
-		border: none;
-		outline: none;
-		z-index: -1;
-		opacity: 0;
-		pointer-events: none;
+		@apply absolute bg-transparent border-none outline-none -z-10 opacity-0 pointer-events-none;
 	}
 
 	div.multiselect > ul.options {
-		position: absolute;
-		top: 100%;
-		left: 0;
-
-		width: 100%;
-		max-height: 50vh;
-
-		overflow: auto;
-		background-color: var(--bg-secondary);
-		color: var(--text);
+		@apply absolute top-full left-0 w-full max-h-[50vh] overflow-auto text-zinc-300 bg-zinc-800;
 	}
 
 	div.multiselect > ul.options.hidden {
@@ -333,11 +299,10 @@
 	}
 
 	div.multiselect > ul.options > li {
-		padding: 0.5rem 0;
-		cursor: pointer;
+		@apply py-2 px-3 cursor-pointer;
 	}
 
 	div.multiselect > ul.options > li.active {
-		background: var(--bg-hover);
+		@apply bg-zinc-700;
 	}
 </style>

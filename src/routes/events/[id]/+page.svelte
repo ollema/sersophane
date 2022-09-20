@@ -5,6 +5,10 @@
 	$: ({ event, eventResponses } = data);
 </script>
 
+<svelte:head>
+	<title>sersophane • events • {event.name}</title>
+</svelte:head>
+
 <main>
 	<table>
 		<tr>

@@ -38,6 +38,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>sersophane • events</title>
+</svelte:head>
+
 <main>
 	<Filters {allVenues} />
 
@@ -82,9 +86,9 @@
 	<Pagination {currentPage} {perPage} {totalItems} />
 </footer>
 
-<style>
+<style lang="postcss">
 	.table {
-		overflow: auto;
+		@apply overflow-auto;
 	}
 
 	table {
@@ -103,36 +107,20 @@
 	thead,
 	tbody,
 	tr {
-		display: contents;
+		@apply contents;
 	}
 
 	td,
 	th {
-		position: relative;
-
-		display: flex;
-		align-items: center;
-
-		padding: 0.5rem;
-
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		@apply relative flex items-center p-2 overflow-hidden text-ellipsis whitespace-nowrap;
 	}
 
 	th {
-		color: var(--fg);
-		font-weight: 600;
-		border-bottom: 3px solid var(--bg-secondary);
+		@apply text-zinc-500 font-semibold border-b-2 border-zinc-800 select-none;
 	}
 
 	th::after {
-		display: inline-block;
-		font-size: xx-small;
-		vertical-align: baseline;
-		position: relative;
-		text-decoration: none;
-		color: var(--slate-400);
+		@apply inline-block relative text-xs align-baseline no-underline text-zinc-500;
 	}
 
 	th.sortAsc::after {
@@ -148,22 +136,19 @@
 	}
 
 	th:hover {
-		color: var(--fg-hover);
+		@apply hover:text-zinc-300 cursor-pointer;
 	}
 
 	tr:nth-child(even) > td {
-		background-color: var(--bg-secondary);
+		@apply bg-zinc-800;
 	}
 
 	tr:hover > td {
-		background-color: var(--bg-hover);
+		@apply bg-zinc-700;
 	}
 
 	img {
+		@apply absolute object-cover h-6 w-6;
 		position: absolute;
-
-		object-fit: cover;
-		height: 1.5rem;
-		width: 1.5rem;
 	}
 </style>
