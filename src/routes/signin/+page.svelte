@@ -12,9 +12,7 @@
 				'Content-Type': 'application/json'
 			}
 		});
-		console.log('signing in - await invalidateAll()');
 		await invalidateAll();
-		console.log('invalidateAll() awaited!');
 		goto('/');
 	}
 </script>

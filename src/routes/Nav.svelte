@@ -8,9 +8,7 @@
 
 	async function signout() {
 		await fetch('auth/signout', { method: 'POST' });
-		console.log('signing out - await invalidateAll()');
 		await invalidateAll();
-		console.log('invalidateAll() awaited!');
 	}
 </script>
 

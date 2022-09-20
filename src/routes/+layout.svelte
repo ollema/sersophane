@@ -13,8 +13,6 @@
 	export let data: LayoutServerData;
 	$: ({ profile } = data);
 
-	$: console.log(profile);
-
 	$: section = $page.url.pathname.split('/')[1];
 </script>
 
