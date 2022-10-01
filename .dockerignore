@@ -1,0 +1,17 @@
+# Ignore everything
+*
+
+# Allow files and directories
+!/src
+!/static
+!/package.json
+!/entrypoint.sh
+!/pnpm-lock.yaml
+!/postcss.config.cjs
+!/svelte.config.js
+!/tailwind.config.cjs
+!/tsconfig.js
+!/vite.config.ts
+
+# Ignore unnecessary files inside allowed directories
+**/.DS_Store
