@@ -1,89 +1,63 @@
-export type City = {
-	id: string;
-	name: string;
+export type IsoDateString = string;
 
-	created: string;
-	updated: string;
+export type RecordIdString = string;
+
+export type UserIdString = string;
+
+export type BaseRecord = {
+	id: RecordIdString;
+	created: IsoDateString;
+	updated: IsoDateString;
 };
 
-export type Venue = {
-	id: string;
+export interface User extends BaseRecord {
 	name: string;
-	city: City;
-	url?: string;
-
-	created: string;
-	updated: string;
-};
-
-export type Artist = {
-	id: string;
-	name: string;
-	url?: string;
-
-	created: string;
-	updated: string;
-};
-
-export type Profile = {
-	id: string;
-	name: string;
+	username: string;
 	avatar: string;
-
-	created: string;
-	updated: string;
-};
-
-export enum Response {
-	Interested = 'interested',
-	Going = 'going',
-	NotGoing = 'not-going'
 }
 
-export type EventResponse = {
-	id: string;
-	response: Response;
-	event: Pick<Event, 'id'>;
-	profile: Profile;
-
-	created: string;
-	updated: string;
-};
-
-export enum EventType {
-	Concert = 'concert',
-	Festival = 'festival',
-	Film = 'film'
-}
-
-export type Event = {
-	id: string;
+export interface City extends BaseRecord {
 	name: string;
-	venue: Venue;
-	artists: Artist[];
-	type: EventType;
-	cancelled?: boolean;
+}
+
+export interface Venue extends BaseRecord {
+	name: string;
+	city: RecordIdString;
+	url?: string;
+
+	expand: {
+		city: City;
+	};
+}
+
+export interface Artist extends BaseRecord {
+	name: string;
+	url?: string;
+}
+
+export interface Response extends BaseRecord {
+	response: 'interested' | 'going' | 'not-going';
+	event: RecordIdString;
+	user: RecordIdString;
+
+	expand: {
+		user: User;
+	};
+}
+
+export interface Event extends BaseRecord {
+	name: string;
+	venue: RecordIdString;
+	artists: RecordIdString[];
+	type: 'concert' | 'music-festival' | 'movie';
+	cancelled: boolean;
 	starts: string;
 	ends: string;
 	url?: string;
 
-	created: string;
-	updated: string;
-};
-
-// types for POST endpoints
-export type CityPost = Omit<City, 'id' | 'created' | 'updated'>;
-
-export type VenuePost = Omit<Venue, 'id' | 'created' | 'updated' | 'city'> & { cityId: string };
-
-export type ArtistPost = Omit<Artist, 'id' | 'created' | 'updated'>;
-
-export type ResponsePost = Omit<EventResponse, 'id' | 'created' | 'updated' | 'event' | 'profile'> & {
-	eventId: string;
-	profileId: string;
-};
-
-export type EventPost = Omit<Event, 'id' | 'created' | 'updated' | 'venue' | 'artists' | 'responses'> & {
-	venueId: string;
-	artistIds: string[];
-};
+	expand: {
+		venue: Venue;
+		artists: Artist[];
+		'responses(event)': Response[];
+	};
+}

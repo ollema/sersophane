@@ -1,9 +1,6 @@
 <svelte:head>
-	<title>sersophane • live show planner</title>
+	<title>sersophane • event planner</title>
+	<meta name="description" content="sersophane is an event planner for friends & family" />
 </svelte:head>
 
-<main>
-	<h1>welcome to sersophane</h1>
-</main>
-
-<footer />
+<h2>welcome to sersophane</h2>

@@ -1,9 +1,4 @@
 <svelte:head>
 	<title>sersophane • about</title>
+	<meta name="description" content="about the sersophane event planner app" />
 </svelte:head>
-
-<main>
-	<h1>about sersophane</h1>
-</main>
-
-<footer />

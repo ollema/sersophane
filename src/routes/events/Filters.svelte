@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { goto, prefetch } from '$app/navigation';
 	import { page } from '$app/stores';
-
-	import MultiSelect from '$lib/components/MultiSelect.svelte';
-
-	import type { Venue } from '$lib/types';
-	import { filtersFromSearchParams } from '$lib/utils';
+	import { slide } from 'svelte/transition';
 
 	let showFilters = false;
 
@@ -13,76 +9,75 @@
 		showFilters = !showFilters;
 	}
 
-	// filter by name
-	let nameFilter = $page.url.searchParams.get('name');
+	async function handleSubmit(e: SubmitEvent) {
+		if (e.target && e.target instanceof HTMLFormElement) {
+			await submitForm(e.target);
+		}
+	}
 
-	// filter by venue
-	export let allVenues: Venue[];
-	const allVenueOptions: { label: string; value: Venue }[] = allVenues.map((venue) => {
-		return {
-			label: venue.name,
-			value: venue
-		};
-	});
-	let selectedVenueOptions: { label: string; value: Venue }[] = filtersFromSearchParams($page.url.searchParams, 'venue', allVenues);
+	async function submitForm(form: HTMLFormElement) {
+		const url = $page.url;
 
-	async function handleFilterSubmit() {
-		const url = new URL($page.url);
-
-		if (nameFilter === '' || nameFilter === null) {
-			url.searchParams.delete('name');
+		const name = new FormData(form).get('name');
+		const nameParam = name?.toString();
+		if (nameParam) {
+			url.searchParams.set('name', nameParam);
 		} else {
-			url.searchParams.set('name', `${nameFilter}`);
+			url.searchParams.delete('name');
 		}
 
-		url.searchParams.delete('venue');
-		for (const venueFilter of selectedVenueOptions) {
-			url.searchParams.append('venue', venueFilter.label as string);
+		const venue = new FormData(form).get('venue');
+		const venueParam = venue?.toString();
+		if (venueParam) {
+			url.searchParams.set('venue', venueParam);
+		} else {
+			url.searchParams.delete('venue');
 		}
 
 		url.searchParams.delete('page');
 
 		prefetch(url.href);
-		await goto(url.href, { keepfocus: true });
+		await goto(url.href, { noscroll: true, keepfocus: true });
 	}
 
-	async function clear() {
-		const url = new URL($page.url);
+	let form: HTMLFormElement;
 
-		nameFilter = null;
-		selectedVenueOptions = [];
-
-		url.searchParams.delete('name');
-		url.searchParams.delete('venue');
-		url.searchParams.delete('page');
-
-		prefetch(url.href);
-		await goto(url.href, { keepfocus: true });
-	}
+	let nameValue = $page.url.searchParams.get('name');
+	let venueValue = $page.url.searchParams.get('venue');
 </script>
 
 <div class="filter-component">
 	<button on:click={show}>filters</button>
 
 	{#if showFilters}
-		<div class="filters">
-			<form on:submit|preventDefault={handleFilterSubmit}>
-				<div class="inputs">
-					<div>
-						<label for="name">filter by name:</label>
-						<!-- svelte-ignore a11y-autofocus -->
-						<input bind:value={nameFilter} id="name" type="text" autocomplete="off" placeholder="event name" autofocus />
+		<div transition:slide class="filters">
+			<form on:submit|preventDefault={handleSubmit} bind:this={form}>
+				<div class="filter-inputs">
+					<div class="filter-input">
+						<label for="name">filter by name</label>
+						<input
+							id="name"
+							name="name"
+							on:input={async () => await submitForm(form)}
+							type="text"
+							autocomplete="event name"
+							placeholder="event name"
+							value={nameValue}
+						/>
 					</div>
 
-					<div>
-						<label for="venue"> filter by venue: </label>
-						<MultiSelect bind:selected={selectedVenueOptions} options={allVenueOptions} placeholder={'venue'} />
+					<div class="filter-input">
+						<label for="venue">filter by venue</label>
+						<input
+							id="venue"
+							name="venue"
+							on:input={async () => await submitForm(form)}
+							type="text"
+							autocomplete="venue name"
+							placeholder="venue name"
+							value={venueValue}
+						/>
 					</div>
-				</div>
-
-				<div class="buttons">
-					<button type="submit">apply filters</button>
-					<button type="button" on:click={clear}>clear filters</button>
 				</div>
 			</form>
 		</div>
@@ -91,43 +86,27 @@
 
 <style lang="postcss">
 	.filter-component {
-		@apply mb-4;
-	}
-
-	button {
-		@apply py-2 px-3 bg-zinc-800;
+		margin-bottom: var(--size-3);
 	}
 
 	.filters {
-		@apply p-4 border-2 border-zinc-800;
+		padding: var(--size-3);
+		margin-top: var(--size-3);
+
+		background-color: var(--surface-2);
+		border: var(--border-size-2) solid var(--surface-3);
+		border-radius: var(--radius-2);
 	}
 
-	.inputs {
-		@apply flex flex-wrap gap-8 mb-4;
+	.filter-inputs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--size-3) var(--size-7);
 	}
 
-	label {
-		@apply inline-block;
-	}
-
-	input {
-		@apply block w-full max-w-[15rem] bg-zinc-900 border-0 border-b-2 border-zinc-800 focus:ring-0 focus:border-emerald-600 hover:border-emerald-300;
-	}
-
-	input:-webkit-autofill,
-	input:-webkit-autofill:hover,
-	input:-webkit-autofill:focus {
-		-webkit-text-fill-color: #a1a1aa;
-		caret-color: #a1a1aa;
-		box-shadow: 0 0 0px 1000px #18181b inset;
-		-webkit-box-shadow: 0 0 0px 1000px #18181b inset;
-	}
-
-	input::placeholder {
-		@apply text-zinc-500;
-	}
-
-	.buttons {
-		@apply flex flex-wrap gap-4;
+	.filter-input {
+		display: flex;
+		flex-direction: column;
+		gap: var(--size-2);
 	}
 </style>

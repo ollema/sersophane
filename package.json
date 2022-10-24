@@ -10,35 +10,35 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"docker:build": "docker build -t sersophane --platform linux/amd64 .",
-		"docker:run": "docker run --rm -it --platform linux/amd64 -p 3000:3000 sersophane:latest"
+		"typegen": "pnpx pocketbase-typegen --db ./pb_data/data.db --out src/lib/types/pocketbase-types.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "next",
 		"@sveltejs/kit": "next",
-		"@tailwindcss/forms": "^0.5.3",
-		"@types/luxon": "^3.0.1",
-		"@typescript-eslint/eslint-plugin": "^5.38.1",
-		"@typescript-eslint/parser": "^5.38.1",
-		"autoprefixer": "^10.4.12",
-		"eslint": "^8.24.0",
+		"@types/luxon": "^3.0.2",
+		"@typescript-eslint/eslint-plugin": "^5.41.0",
+		"@typescript-eslint/parser": "^5.41.0",
+		"autoprefixer": "^10.4.13",
+		"eslint": "^8.26.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
-		"postcss": "^8.4.17",
+		"luxon": "^3.0.4",
+		"open-props": "^1.4.20",
+		"pocketbase": "0.8.0-rc1",
+		"postcss": "^8.4.18",
+		"postcss-custom-media": "^8.0.2",
+		"postcss-jit-props": "^1.0.7",
+		"postcss-load-config": "^4.0.1",
+		"postcss-nesting": "^10.2.0",
 		"prettier": "^2.7.1",
-		"prettier-plugin-svelte": "^2.7.1",
-		"svelte": "^3.50.1",
-		"svelte-check": "^2.9.1",
+		"prettier-plugin-svelte": "^2.8.0",
+		"svelte": "^3.52.0",
+		"svelte-check": "^2.9.2",
 		"svelte-preprocess": "^4.10.7",
 		"svooltip": "^0.3.0",
-		"tailwindcss": "^3.1.8",
 		"tslib": "^2.4.0",
 		"typescript": "^4.8.4",
-		"vite": "^3.1.4"
+		"vite": "^3.2.2"
 	},
-	"type": "module",
-	"dependencies": {
-		"luxon": "^3.0.4",
-		"pocketbase": "^0.7.1"
-	}
+	"type": "module"
 }

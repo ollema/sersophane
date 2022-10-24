@@ -1,10 +1,16 @@
-import PocketBase, { User } from 'pocketbase';
+import PocketBase from 'pocketbase';
 
 declare global {
 	namespace App {
 		interface Locals {
-			pocketbase: PocketBase;
-			user?: User;
+			pb: PocketBase;
+			user?: {
+				id: string;
+				username: string;
+				name: string;
+				email: string;
+				avatar: string;
+			};
 		}
 	}
 }
