@@ -1,16 +1,16 @@
 # sersophane
 
-Live show planner
+event planner
 
-## Developing
+## developing
 
-Install dependencies:
+install dependencies:
 
 ```bash
 pnpm install
 ```
 
-Start a development server:
+start a development server:
 
 ```bash
 pnpm run dev
@@ -18,7 +18,7 @@ pnpm run dev
 
 ## TODO:
 
-- no more multiselect bs
-- read up on form action
-- update kit version
-- Dockerfile with tini + bash
+- add event detail page
+- add account edit functionality
+- add event creation form
+- add response buttons
