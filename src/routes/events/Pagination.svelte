@@ -70,7 +70,7 @@
 	async function gotoPage(selectedPage: number) {
 		const url = new URL($pageStore.url);
 		url.searchParams.set('page', `${selectedPage}`);
-		prefetch(url.href);
+		await prefetch(url.href);
 		await goto(url.href);
 	}
 </script>

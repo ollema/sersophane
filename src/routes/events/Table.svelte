@@ -6,15 +6,15 @@
 
 	import { formatDate } from '$lib/utils';
 
-	import type { Event } from '$lib/types';
 	import type { ListResult } from 'pocketbase';
+	import type { Event } from '$lib/types';
 
 	export let events: ListResult<Event>;
 	export let sort: string | null;
 
 	async function toggleSort(sortBy: string) {
 		const url = new URL($page.url);
-		let sortParam = url.searchParams.get('sort');
+		const sortParam = url.searchParams.get('sort');
 		if (sortParam === `${sortBy}`) {
 			url.searchParams.set('sort', `-${sortBy}`);
 		} else if (sortParam === `-${sortBy}`) {
@@ -22,17 +22,8 @@
 		} else {
 			url.searchParams.set('sort', `${sortBy}`);
 		}
-		prefetch(url.href);
+		await prefetch(url.href);
 		await goto(url.href);
-	}
-	async function toggleSortByName() {
-		toggleSort('name');
-	}
-	async function toggleSortByStarts() {
-		toggleSort('starts');
-	}
-	async function toggleSortByVenue() {
-		toggleSort('venue');
 	}
 </script>
 
@@ -40,9 +31,33 @@
 	<table>
 		<thead>
 			<tr>
-				<th class:sortAsc={sort === 'name'} class:sortDesc={sort === '-name'} on:click={toggleSortByName}>what</th>
-				<th class:sortAsc={sort === 'starts'} class:sortDesc={sort === '-starts'} on:click={toggleSortByStarts}>when</th>
-				<th class:sortAsc={sort === 'venue'} class:sortDesc={sort === '-venue'} on:click={toggleSortByVenue}>where</th>
+				<th
+					class:sortAsc={sort === 'name'}
+					class:sortDesc={sort === '-name'}
+					on:click={() => {
+						toggleSort('name');
+					}}
+				>
+					what
+				</th>
+				<th
+					class:sortAsc={sort === 'starts'}
+					class:sortDesc={sort === '-starts'}
+					on:click={() => {
+						toggleSort('starts');
+					}}
+				>
+					when
+				</th>
+				<th
+					class:sortAsc={sort === 'venue'}
+					class:sortDesc={sort === '-venue'}
+					on:click={() => {
+						toggleSort('venue');
+					}}
+				>
+					where
+				</th>
 				<th>who</th>
 				<th />
 			</tr>

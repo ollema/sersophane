@@ -36,7 +36,7 @@
 
 		url.searchParams.delete('page');
 
-		prefetch(url.href);
+		await prefetch(url.href);
 		await goto(url.href, { noscroll: true, keepfocus: true });
 	}
 
