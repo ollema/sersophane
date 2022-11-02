@@ -23,9 +23,9 @@
 
 		<ul class="profile">
 			{#if user}
-				<li><a href="/account">{user?.name || user?.username}</a></li>
+				<li><a href="/account">{user?.name || user?.username || 'no username set'}</a></li>
 			{:else}
-				<li><a class:selected={section === 'signin'} href="/signin">sign in</a></li>
+				<li><a href="/auth/signin">sign in</a></li>
 			{/if}
 		</ul>
 	</div>
