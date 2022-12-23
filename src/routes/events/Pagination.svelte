@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, prefetch } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page as pageStore } from '$app/stores';
 
 	import type { ListResult } from 'pocketbase';
@@ -70,7 +70,6 @@
 	async function gotoPage(selectedPage: number) {
 		const url = new URL($pageStore.url);
 		url.searchParams.set('page', `${selectedPage}`);
-		await prefetch(url.href);
 		await goto(url.href);
 	}
 </script>

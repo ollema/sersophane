@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, prefetch } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	import { tooltip } from 'svooltip';
@@ -22,7 +22,6 @@
 		} else {
 			url.searchParams.set('sort', `${sortBy}`);
 		}
-		await prefetch(url.href);
 		await goto(url.href);
 	}
 </script>

@@ -21,10 +21,6 @@
 				<td>display name:</td>
 				<td>{user?.name}</td>
 			</tr>
-			<tr>
-				<td>email:</td>
-				<td>{user?.email}</td>
-			</tr>
 		</table>
 
 		<form action="?/signout" method="POST">

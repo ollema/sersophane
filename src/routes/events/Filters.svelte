@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, prefetch } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { slide } from 'svelte/transition';
 
@@ -36,8 +36,7 @@
 
 		url.searchParams.delete('page');
 
-		await prefetch(url.href);
-		await goto(url.href, { noscroll: true, keepfocus: true });
+		await goto(url.href, { noScroll: true, keepFocus: true });
 	}
 
 	let form: HTMLFormElement;
