@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
-	import 'svooltip/svooltip.css';
+	import 'svooltip/styles.css';
 	import '../openprops.css';
 	import '../app.css';
 
@@ -16,9 +16,9 @@
 <nav>
 	<div>
 		<ul class="links">
-			<li><a data-sveltekit-prefetch href="/" class:selected={section === ''}>sersophane</a></li>
-			<li><a data-sveltekit-prefetch href="/events" class:selected={section === 'events'}>events</a></li>
-			<li><a data-sveltekit-prefetch href="/about" class:selected={section === 'about'}>about</a></li>
+			<li><a href="/" class:selected={section === ''}>sersophane</a></li>
+			<li><a href="/events" class:selected={section === 'events'}>events</a></li>
+			<li><a href="/about" class:selected={section === 'about'}>about</a></li>
 		</ul>
 
 		<ul class="profile">
