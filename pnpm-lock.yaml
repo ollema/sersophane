@@ -10,7 +10,7 @@ specifiers:
   eslint-config-prettier: ^8.5.0
   eslint-plugin-svelte3: ^4.0.0
   open-props: ^1.5.3
-  pocketbase: ^0.9.0
+  pocketbase: ^0.9.1
   postcss: ^8.4.20
   postcss-custom-media: ^9.0.1
   postcss-jit-props: ^1.0.8
@@ -20,6 +20,7 @@ specifiers:
   prettier-plugin-svelte: ^2.9.0
   svelte: ^3.55.0
   svelte-check: ^2.10.3
+  svelte-multiselect: ^8.2.1
   svelte-preprocess: ^5.0.0
   svooltip: ^0.5.0
   tslib: ^2.4.1
@@ -37,7 +38,7 @@ devDependencies:
   eslint-config-prettier: 8.5.0_eslint@8.30.0
   eslint-plugin-svelte3: 4.0.0_khrjkzzv5v2x7orkj5o7sxbz3a
   open-props: 1.5.3
-  pocketbase: 0.9.0
+  pocketbase: 0.9.1
   postcss: 8.4.20
   postcss-custom-media: 9.0.1_postcss@8.4.20
   postcss-jit-props: 1.0.8_postcss@8.4.20
@@ -47,6 +48,7 @@ devDependencies:
   prettier-plugin-svelte: 2.9.0_ajxj753sv7dbwexjherrch25ta
   svelte: 3.55.0
   svelte-check: 2.10.3_7tgmgw23w4ankk7vtabgm5xtbu
+  svelte-multiselect: 8.2.1
   svelte-preprocess: 5.0.0_4pbnl6cqae4gmabfifuvcfaifu
   svooltip: 0.5.0
   tslib: 2.4.1
@@ -1647,8 +1649,8 @@ packages:
     engines: {node: '>=8.6'}
     dev: true
 
-  /pocketbase/0.9.0:
-    resolution: {integrity: sha512-wLH8JNqtilgVgXMcO9kWcydryxemf8rZgTyn+DTHWtkwOe1ya6MuAOpVHtljIUxxtukZ82LSB2K7h12FZHwGMA==}
+  /pocketbase/0.9.1:
+    resolution: {integrity: sha512-a9S/WHak+mgr3WI8bD2tz3lFVFzoy6ZgKTBlUXwIH4VLTKVU3JKeAKxqIFBF7av4qblmB+52tX8sWLS08Ftm/w==}
     dev: true
 
   /postcss-custom-media/9.0.1_postcss@8.4.20:
@@ -1967,6 +1969,10 @@ packages:
       svelte: '>=3.19.0'
     dependencies:
       svelte: 3.55.0
+    dev: true
+
+  /svelte-multiselect/8.2.1:
+    resolution: {integrity: sha512-5LXEEJq01XQt7IzK8iwljA1bTt7CxqdLjxQnjS3DnlPe0UKlxZ5iXwFU3HiiBabseXx74lVj7njIwvsSEOgZhA==}
     dev: true
 
   /svelte-preprocess/4.10.7_4pbnl6cqae4gmabfifuvcfaifu:

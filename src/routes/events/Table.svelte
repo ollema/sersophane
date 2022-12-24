@@ -30,6 +30,7 @@
 	<table>
 		<thead>
 			<tr>
+				<th>going?</th>
 				<th
 					class:sortAsc={sort === 'name'}
 					class:sortDesc={sort === '-name'}
@@ -65,17 +66,47 @@
 		<tbody>
 			{#each events.items as event}
 				<tr>
+					<td>
+						<form method="POST">
+							<input type="hidden" name="id" value={event.id} />
+							<button type="submit" formaction="?/respondGoing">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+									<path
+										fill-rule="evenodd"
+										d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+										clip-rule="evenodd"
+									/>
+								</svg>
+							</button>
+							<button type="submit" formaction="?/respondInterested">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+									<path
+										d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"
+									/>
+								</svg>
+							</button>
+							<button type="submit" formaction="?/respondNotGoing">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+									<path
+										d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
+									/>
+								</svg>
+							</button>
+						</form>
+					</td>
 					<td><a href="/events/{event.id}">{event.name}</a></td>
 					<td>{formatDate(event.starts)}</td>
 					<td>{event.expand.venue.name}</td>
 					<td>
 						{#if event.expand['responses(event)'] !== undefined}
 							{#each event.expand['responses(event)'] as response}
-								<img
-									use:tooltip={{ content: response.expand.user.name }}
-									src={`http://127.0.0.1:8090/api/files/users/${response.expand.user.id}/${response.expand.user.avatar}?thumb=100x100`}
-									alt="avatar for {response.expand.user.name}"
-								/>
+								{#if response.response !== 'not-going'}
+									<img
+										use:tooltip={{ content: response.expand.user.name }}
+										src={`http://127.0.0.1:8090/api/files/users/${response.expand.user.id}/${response.expand.user.avatar}?thumb=100x100`}
+										alt="avatar for {response.expand.user.name}"
+									/>
+								{/if}
 							{/each}
 						{/if}
 					</td>
@@ -95,6 +126,7 @@
 		display: grid;
 
 		grid-template-columns:
+			minmax(6rem, 6rem)
 			minmax(2rem, 2fr)
 			minmax(2rem, 1fr)
 			minmax(2rem, 2fr)
@@ -158,6 +190,29 @@
 
 	tr:hover > td {
 		background-color: var(--surface-3);
+	}
+
+	td > form {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--size-1);
+
+		& > button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			padding: 0;
+
+			width: var(--size-5);
+			height: var(--size-5);
+
+			& > svg {
+				width: var(--size-4);
+				height: var(--size-4);
+			}
+		}
 	}
 
 	img {
