@@ -37,8 +37,8 @@
 		padding: var(--size-3);
 		margin-top: var(--size-3);
 
-		background-color: var(--surface-2);
-		border: var(--border-size-2) solid var(--surface-3);
+		background-color: var(--surface-3);
+		border: var(--border-size-2) solid var(--surface-4);
 		border-radius: var(--radius-2);
 	}
 

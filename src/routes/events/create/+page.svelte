@@ -1,14 +1,8 @@
 <script lang="ts">
-	import MultiSelect from 'svelte-multiselect';
-	import type { Option } from 'svelte-multiselect';
-
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 	$: ({ allVenues, allArtists } = data);
-
-	let venue: Option[];
-	let artists: Option[];
 </script>
 
 <svelte:head>
@@ -16,26 +10,25 @@
 	<meta name="description" content="create new event" />
 </svelte:head>
 
-<h2>create new event</h2>
+<h3>create new event</h3>
 
 <form action="?/createNewEvent" method="POST">
-	<label for="name">name</label>
-	<input type="text" name="name" id="name" />
+	<fieldset>
+		<label for="name">name</label>
+		<input type="text" name="name" id="name" />
 
-	<label for="starts">starts</label>
-	<input type="date" name="starts" id="starts" />
+		<label for="starts">starts</label>
+		<input type="date" name="starts" id="starts" />
 
-	<label for="venue">venue</label>
-	<MultiSelect bind:selected={venue} options={allVenues} />
-
-	<label for="artists">artists</label>
-	<MultiSelect bind:selected={artists} options={allArtists} />
-
-	<button type="submit">create</button>
+		<button type="submit">create</button>
+	</fieldset>
 </form>
 
 <style lang="postcss">
-	form {
+	h3 {
+		margin-bottom: var(--size-3);
+	}
+	/* form {
 		display: flex;
 		flex-direction: column;
 
@@ -46,5 +39,5 @@
 		& > button {
 			margin-top: 1rem;
 		}
-	}
+	} */
 </style>

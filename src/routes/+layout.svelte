@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
+	import 'modern-normalize/modern-normalize.css';
 	import 'svooltip/styles.css';
-	import '../openprops.css';
 	import '../app.css';
 
 	import type { LayoutServerData } from './$types';

@@ -81,22 +81,6 @@ async function respond(pb: PocketBase, request: Request, response: 'going' | 'in
 }
 
 export const actions: Actions = {
-	createEvent: async ({ locals, request }) => {
-		const data = await request.formData();
-		const event = await locals.pb.collection('events').create({
-			name: data.get('name'),
-			description: data.get('description'),
-			starts: data.get('starts'),
-			ends: data.get('ends'),
-			venue: data.get('venue'),
-			artists: data.getAll('artists')
-		});
-
-		return {
-			status: 201,
-			body: structuredClone(event)
-		};
-	},
 	respondGoing: async ({ locals, request }) => {
 		await respond(locals.pb, request, 'going');
 	},

@@ -45,11 +45,11 @@
 	let venueValue = $page.url.searchParams.get('venue');
 </script>
 
-<div class="filter-component">
+<div class="filters">
 	<button on:click={show}>filters</button>
 
 	{#if showFilters}
-		<div transition:slide class="filters">
+		<div transition:slide class="filters-container">
 			<form on:submit|preventDefault={handleSubmit} bind:this={form}>
 				<div class="filter-inputs">
 					<div class="filter-input">
@@ -84,28 +84,41 @@
 </div>
 
 <style lang="postcss">
-	.filter-component {
-		margin-bottom: var(--size-3);
-	}
-
 	.filters {
-		padding: var(--size-3);
-		margin-top: var(--size-3);
+		margin-bottom: var(--size-3);
 
-		background-color: var(--surface-2);
-		border: var(--border-size-2) solid var(--surface-3);
-		border-radius: var(--radius-2);
-	}
+		& .filters-container {
+			padding: var(--size-3);
+			margin-top: var(--size-3);
 
-	.filter-inputs {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--size-3) var(--size-7);
-	}
+			border: var(--border-size-2) solid var(--surface-3);
+			border-radius: var(--radius-2);
 
-	.filter-input {
-		display: flex;
-		flex-direction: column;
-		gap: var(--size-2);
+			& .filter-inputs {
+				display: flex;
+				flex-wrap: wrap;
+				gap: var(--size-3) var(--size-7);
+
+				& .filter-input {
+					display: flex;
+					flex-direction: column;
+					gap: var(--size-2);
+
+					/* & input {
+						padding: var(--size-2);
+
+						background-color: var(--gray-10);
+						border: var(--border-size-2) solid var(--surface-3);
+						border-radius: var(--radius-2);
+
+						&:focus {
+							outline: none;
+							background-color: var(--gray-11);
+							border-color: var(--brand);
+						}
+					} */
+				}
+			}
+		}
 	}
 </style>

@@ -120,6 +120,8 @@
 <style lang="postcss">
 	.table {
 		overflow: auto;
+
+		margin-bottom: var(--size-3);
 	}
 
 	table {
@@ -155,7 +157,7 @@
 	}
 
 	th {
-		border-bottom: 3px solid var(--surface-2);
+		border-bottom: var(--border-size-2) solid var(--surface-3);
 	}
 
 	th::after {
@@ -185,11 +187,11 @@
 	}
 
 	tr:nth-child(even) > td {
-		background-color: var(--surface-2);
+		background-color: var(--surface-3);
 	}
 
 	tr:hover > td {
-		background-color: var(--surface-3);
+		background-color: var(--surface-4);
 	}
 
 	td > form {
